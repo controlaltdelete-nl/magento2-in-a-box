@@ -13,23 +13,29 @@ jobs:
         cfg:
           - { PHP_VERSION: php82-fpm, MAGENTO_VERSION: 2.4.6 }
     steps:
-    - uses: actions/checkout@v1
-
-    - name: Cache Composer packages
-      uses: actions/cache@v3
-      with:
-        path: magento/vendor
-        key: ${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}-with-replacements
-
-    - name: Create vendor folder
-      run: mkdir magento/vendor || echo "Vendor folder already exists"
+    - uses: actions/checkout@v5
 
     # Step 1: Build the docker image
+    - name: Compute tag
+      id: tags
+      run: |
+        tag="${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}"
+        main_tag="magento${{ matrix.cfg.MAGENTO_VERSION }}"
+
+        if [[ "${{ matrix.cfg.SAMPLE_DATA }}" == "true" ]]; then
+          tag="${tag}-sample-data"
+          main_tag="${main_tag}-sample-data"
+        fi
+
+        echo "tag=$tag" >> "$GITHUB_OUTPUT"
+        echo "main_tag=$main_tag" >> "$GITHUB_OUTPUT"
+
     - name: Build the Docker image
       run:
         docker build magento -f magento/Dockerfile-with-replacements
         -t michielgerritsen/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}-with-replacements
         -t ghcr.io/${{ github.repository }}/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}-with-replacements
+        -t ghcr.io/${{ github.repository }}/magento-project-community-edition:magento${{ matrix.cfg.MAGENTO_VERSION }}-with-replacements
         --build-arg MAGENTO_VERSION=${{ matrix.cfg.MAGENTO_VERSION }}
         --build-arg PHP_VERSION=${{ matrix.cfg.PHP_VERSION }}
 
@@ -65,15 +71,13 @@ jobs:
       run: |
         echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
         docker push ghcr.io/${{ github.repository }}/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}-with-replacements
+        docker push ghcr.io/${{ github.repository }}/magento-project-community-edition:magento${{ matrix.cfg.MAGENTO_VERSION }}-with-replacements
 
     - name: Push the image to Docker hub
       if: github.ref == 'refs/heads/master'
       run: |
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
         docker push michielgerritsen/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}-with-replacements
-
-    - name: Copy the vendor folder for caching
-      run: docker cp magento-project-community-edition:/data/vendor magento/vendor
 
     - name: Dump Docker logs files (on failure)
       if: failure()

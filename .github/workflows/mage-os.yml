@@ -44,39 +44,35 @@ jobs:
     - uses: actions/checkout@v5
 
     # Step 1: Build the docker image
-    - name: Build the Docker image (without sample data)
-      if: matrix.cfg.SAMPLE_DATA == false
-      run:
-        docker build mage-os -f mage-os/Dockerfile
-        -t michielgerritsen/mage-os-community-edition:${{ matrix.cfg.PHP_VERSION }}-mage-os${{ matrix.cfg.MAGEOS_VERSION }}
-        -t ghcr.io/${{ github.repository }}/mage-os-community-edition:mage-os${{ matrix.cfg.MAGENTO_VERSION }}
-        -t ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ matrix.cfg.PHP_VERSION }}-mage-os${{ matrix.cfg.MAGENTO_VERSION }}
-        --build-arg MAGEOS_VERSION=${{ matrix.cfg.MAGEOS_VERSION }}
-        --build-arg PHP_VERSION=${{ matrix.cfg.PHP_VERSION }}
+    - name: Compute tag
+      id: tags
+      run: |
+        tag="${{ matrix.cfg.PHP_VERSION }}-mage-os${{ matrix.cfg.MAGEOS_VERSION }}"
+        main_tag="mage-os${{ matrix.cfg.MAGEOS_VERSION }}"
 
-    - name: Build the Docker image (with sample data)
-      if: matrix.cfg.SAMPLE_DATA == true
+        if [[ "${{ matrix.cfg.SAMPLE_DATA }}" == "true" ]]; then
+          tag="${tag}-sample-data"
+          main_tag="${main_tag}-sample-data"
+        fi
+
+        echo "tag=$tag" >> "$GITHUB_OUTPUT"
+        echo "main_tag=$main_tag" >> "$GITHUB_OUTPUT"
+
+    - name: Build the Docker image (without sample data)
       run:
         docker build mage-os -f mage-os/Dockerfile
-        -t michielgerritsen/mage-os-community-edition:${{ matrix.cfg.PHP_VERSION }}-mage-os${{ matrix.cfg.MAGEOS_VERSION }}-sample-data
-        -t ghcr.io/${{ github.repository }}/mage-os-community-edition:mage-os${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
-        -t ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ matrix.cfg.PHP_VERSION }}-mage-os${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
+        -t michielgerritsen/mage-os-community-edition:${{ steps.tags.outputs.tag }}
+        -t ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ steps.tags.outputs.tag }}
+        -t ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ steps.tags.outputs.main_tag }}
         --build-arg MAGEOS_VERSION=${{ matrix.cfg.MAGEOS_VERSION }}
         --build-arg PHP_VERSION=${{ matrix.cfg.PHP_VERSION }}
-        --build-arg SAMPLE_DATA=true
+        --build-arg SAMPLE_DATA=${{ matrix.cfg.SAMPLE_DATA }}
 
     # Step 2: Test the docker image
-    - name: Start the docker image (without sample date)
-      if: matrix.cfg.SAMPLE_DATA == false
+    - name: Start the docker image
       run:
         docker run --memory=4G --detach --name mage-os-community-edition
-        michielgerritsen/mage-os-community-edition:${{ matrix.cfg.PHP_VERSION }}-mage-os${{ matrix.cfg.MAGEOS_VERSION }}
-
-    - name: Start the docker image (with sample date)
-      if: matrix.cfg.SAMPLE_DATA == true
-      run:
-        docker run --detach --name mage-os-community-edition
-        michielgerritsen/mage-os-community-edition:${{ matrix.cfg.PHP_VERSION }}-mage-os${{ matrix.cfg.MAGEOS_VERSION }}-sample-data
+        michielgerritsen/mage-os-community-edition:${{ steps.tags.outputs.tag }}
 
     - name: Copy the example test module
       run: |
@@ -97,39 +93,22 @@ jobs:
       run: docker exec mage-os-community-edition composer require michielgerritsen/exampletest:@dev
 
     # Step 3: Upload the images to Docker Hub and ghcr.io.
-    - name: Push the image to GitHub Container Registry (without sample data)
-      if: github.ref == 'refs/heads/master' && matrix.cfg.SAMPLE_DATA == false
+    - name: Push the image to GitHub Container Registry
+      if: github.ref == 'refs/heads/master'
       env:
         MAIN_VERSION: ${{ matrix.cfg.MAIN_VERSION }}
       run: |
         echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-        docker push ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ matrix.cfg.PHP_VERSION }}-mage-os${{ matrix.cfg.MAGENTO_VERSION }}
+        docker push ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ steps.tags.outputs.tag }}
         if [[ -n "${MAIN_VERSION}" ]]; then
-          docker push ghcr.io/${{ github.repository }}/mage-os-community-edition:mage-os${{ matrix.cfg.MAGENTO_VERSION }}
+          docker push ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ steps.tags.outputs.main_tag }}
         fi
 
-    - name: Push the image to GitHub Container Registry  (with sample data)
-      if: github.ref == 'refs/heads/master' && matrix.cfg.SAMPLE_DATA == true
-      env:
-        MAIN_VERSION: ${{ matrix.cfg.MAIN_VERSION }}
-      run: |
-        echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-        docker push ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ matrix.cfg.PHP_VERSION }}-mage-os${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
-        if [[ -n "${MAIN_VERSION}" ]]; then
-          docker push ghcr.io/${{ github.repository }}/mage-os-community-edition:mage-os${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
-        fi
-
-    - name: Push the image to Docker hub (without sample data)
-      if: github.ref == 'refs/heads/master' && matrix.cfg.SAMPLE_DATA == false
+    - name: Push the image to Docker hub
+      if: github.ref == 'refs/heads/master'
       run: |
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        docker push michielgerritsen/mage-os-community-edition:${{ matrix.cfg.PHP_VERSION }}-mage-os${{ matrix.cfg.MAGEOS_VERSION }}
-
-    - name: Push the image to Docker hub (with sample data)
-      if: github.ref == 'refs/heads/master' && matrix.cfg.SAMPLE_DATA == true
-      run: |
-        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        docker push michielgerritsen/mage-os-community-edition:${{ matrix.cfg.PHP_VERSION }}-mage-os${{ matrix.cfg.MAGEOS_VERSION }}-sample-data
+        docker push michielgerritsen/mage-os-community-edition:${{ steps.tags.outputs.tag }}
 
     - name: Dump Docker logs files (on failure)
       if: failure()
@@ -142,6 +121,6 @@ jobs:
       if: failure()
       uses: actions/upload-artifact@v4
       with:
-        name: failure-artifacts-${{ matrix.cfg.PHP_VERSION }}-mage-os${{ matrix.cfg.MAGEOS_VERSION }}
+        name: failure-artifacts-${{ steps.tags.outputs.tag }}
         path: |
           failure-logs

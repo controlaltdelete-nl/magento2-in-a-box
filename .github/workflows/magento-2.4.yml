@@ -252,41 +252,36 @@ jobs:
     - uses: actions/checkout@v4
 
     # Step 1: Build the docker image
-    - name: Build the Docker image (without sample data)
-      if: matrix.cfg.SAMPLE_DATA == false
-      run:
-        docker build magento -f magento/Dockerfile-2.4
-        -t michielgerritsen/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}
-        -t ghcr.io/${{ github.repository }}/magento-project-community-edition:magento${{ matrix.cfg.MAGENTO_VERSION }}
-        -t ghcr.io/${{ github.repository }}/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}
-        --build-arg COMPOSER_AUTH="$COMPOSER_AUTH"
-        --build-arg MAGENTO_VERSION=${{ matrix.cfg.MAGENTO_VERSION }}
-        --build-arg PHP_VERSION=${{ matrix.cfg.PHP_VERSION }}
+    - name: Compute tag
+      id: tags
+      run: |
+        tag="${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}"
+        main_tag="magento${{ matrix.cfg.MAGENTO_VERSION }}"
 
-    - name: Build the Docker image (with sample data)
-      if: matrix.cfg.SAMPLE_DATA == true
+        if [[ "${{ matrix.cfg.SAMPLE_DATA }}" == "true" ]]; then
+          tag="${tag}-sample-data"
+          main_tag="${main_tag}-sample-data"
+        fi
+
+        echo "tag=$tag" >> "$GITHUB_OUTPUT"
+        echo "main_tag=$main_tag" >> "$GITHUB_OUTPUT"
+
+    - name: Build the Docker image
       run:
         docker build magento -f magento/Dockerfile-2.4
-        -t michielgerritsen/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
-        -t ghcr.io/${{ github.repository }}/magento-project-community-edition:magento${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
-        -t ghcr.io/${{ github.repository }}/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
+        -t michielgerritsen/magento-project-community-edition:${{ steps.tags.outputs.tag }}
+        -t ghcr.io/${{ github.repository }}/magento-project-community-edition:${{ steps.tags.outputs.tag }}
+        -t ghcr.io/${{ github.repository }}/magento-project-community-edition:${{ steps.tags.outputs.main_tag }}
         --build-arg COMPOSER_AUTH="$COMPOSER_AUTH"
         --build-arg MAGENTO_VERSION=${{ matrix.cfg.MAGENTO_VERSION }}
         --build-arg PHP_VERSION=${{ matrix.cfg.PHP_VERSION }}
-        --build-arg SAMPLE_DATA=true
+        --build-arg SAMPLE_DATA=${{ matrix.cfg.SAMPLE_DATA }}
 
     # Step 2: Test the docker image
-    - name: Start the docker image (without sample date)
-      if: matrix.cfg.SAMPLE_DATA == false
+    - name: Start the docker image
       run:
         docker run --memory=4G --detach --name magento-project-community-edition
-        michielgerritsen/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}
-
-    - name: Start the docker image (with sample date)
-      if: matrix.cfg.SAMPLE_DATA == true
-      run:
-        docker run --detach --name magento-project-community-edition
-        michielgerritsen/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
+        michielgerritsen/magento-project-community-edition:${{ steps.tags.outputs.tag }}
 
     - name: Create the dummy test directory
       run: docker exec magento-project-community-edition mkdir -p /data/app/code/MichielGerritsen/Magento2ExtensionIntegrationTest/Test/Integration
@@ -310,39 +305,22 @@ jobs:
       run: docker exec magento-project-community-edition bash -c "cd /data/dev/tests/integration/ && ../../../vendor/bin/phpunit /data/vendor/michielgerritsen/exampletest/Test/Integration/ExampleTest.php"
 
     # Step 3: Upload the images to Docker Hub and ghcr.io.
-    - name: Push the image to GitHub Container Registry (without sample data)
-      if: github.ref == 'refs/heads/master' && matrix.cfg.SAMPLE_DATA == false
+    - name: Push the image to GitHub Container Registry
+      if: github.ref == 'refs/heads/master'
       env:
         MAIN_VERSION: ${{ matrix.cfg.MAIN_VERSION }}
       run: |
         echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-        docker push ghcr.io/${{ github.repository }}/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}
+        docker push ghcr.io/${{ github.repository }}/magento-project-community-edition:${{ steps.tags.outputs.tag }}
         if [[ -n "${MAIN_VERSION}" ]]; then
-          docker push ghcr.io/${{ github.repository }}/magento-project-community-edition:magento${{ matrix.cfg.MAGENTO_VERSION }}
+          docker push ghcr.io/${{ github.repository }}/magento-project-community-edition:${{ steps.tags.outputs.main_tag }}
         fi
 
-    - name: Push the image to GitHub Container Registry  (with sample data)
-      if: github.ref == 'refs/heads/master' && matrix.cfg.SAMPLE_DATA == true
-      env:
-        MAIN_VERSION: ${{ matrix.cfg.MAIN_VERSION }}
-      run: |
-        echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-        docker push ghcr.io/${{ github.repository }}/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
-        if [[ -n "${MAIN_VERSION}" ]]; then
-          docker push ghcr.io/${{ github.repository }}/magento-project-community-edition:magento${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
-        fi
-
-    - name: Push the image to Docker hub (without sample data)
-      if: github.ref == 'refs/heads/master' && matrix.cfg.SAMPLE_DATA == false
+    - name: Push the image to Docker hub
+      if: github.ref == 'refs/heads/master'
       run: |
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        docker push michielgerritsen/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}
-
-    - name: Push the image to Docker hub (with sample data)
-      if: github.ref == 'refs/heads/master' && matrix.cfg.SAMPLE_DATA == true
-      run: |
-        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        docker push michielgerritsen/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
+        docker push michielgerritsen/magento-project-community-edition:${{ steps.tags.outputs.tag }}
 
     - name: Dump Docker logs files (on failure)
       if: failure()
@@ -355,6 +333,6 @@ jobs:
       if: failure()
       uses: actions/upload-artifact@v4
       with:
-        name: failure-artifacts-${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}
+        name: failure-artifacts-${{ steps.tags.outputs.tag }}
         path: |
           failure-logs
