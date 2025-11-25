@@ -58,7 +58,7 @@ jobs:
         echo "tag=$tag" >> "$GITHUB_OUTPUT"
         echo "main_tag=$main_tag" >> "$GITHUB_OUTPUT"
 
-    - name: Build the Docker image (without sample data)
+    - name: Build the Docker image
       run:
         docker build mage-os -f mage-os/Dockerfile
         -t michielgerritsen/mage-os-community-edition:${{ steps.tags.outputs.tag }}
