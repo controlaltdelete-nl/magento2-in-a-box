@@ -1,5 +1,5 @@
 ARG PHP_VERSION=php82-fpm
-FROM michielgerritsen/magento2-base-image:${PHP_VERSION}
+FROM ghcr.io/controlaltdelete-nl/magento2-docker-base-images/magento2-base-image:${PHP_VERSION}
 
 ARG MAGENTO_VERSION=2.4.6
 ARG MAGENTO_TYPE=project-community-edition
