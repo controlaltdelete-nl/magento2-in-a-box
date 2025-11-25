@@ -12,40 +12,40 @@ jobs:
       fail-fast: false
       matrix:
         cfg:
-          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.7-p4, SAMPLE_DATA: false }
-          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.7-p4, SAMPLE_DATA: true }
+          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.7-p4, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.7-p4, SAMPLE_DATA: true, MAIN_VERSION: true }
           - { PHP_VERSION: php74-fpm, MAGENTO_VERSION: 2.3.7-p4, SAMPLE_DATA: false }
           - { PHP_VERSION: php74-fpm, MAGENTO_VERSION: 2.3.7-p4, SAMPLE_DATA: true }
-          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.7-p3, SAMPLE_DATA: false }
-          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.7-p3, SAMPLE_DATA: true }
+          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.7-p3, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.7-p3, SAMPLE_DATA: true, MAIN_VERSION: true }
           - { PHP_VERSION: php74-fpm, MAGENTO_VERSION: 2.3.7-p3, SAMPLE_DATA: false }
           - { PHP_VERSION: php74-fpm, MAGENTO_VERSION: 2.3.7-p3, SAMPLE_DATA: true }
-          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.7-p2, SAMPLE_DATA: false }
-          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.7-p2, SAMPLE_DATA: true }
+          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.7-p2, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.7-p2, SAMPLE_DATA: true, MAIN_VERSION: true }
           - { PHP_VERSION: php74-fpm, MAGENTO_VERSION: 2.3.7-p2, SAMPLE_DATA: false }
           - { PHP_VERSION: php74-fpm, MAGENTO_VERSION: 2.3.7-p2, SAMPLE_DATA: true }
-          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.7-p1, SAMPLE_DATA: false }
-          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.7-p1, SAMPLE_DATA: true }
+          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.7-p1, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.7-p1, SAMPLE_DATA: true, MAIN_VERSION: true }
           - { PHP_VERSION: php74-fpm, MAGENTO_VERSION: 2.3.7-p1, SAMPLE_DATA: false }
           - { PHP_VERSION: php74-fpm, MAGENTO_VERSION: 2.3.7-p1, SAMPLE_DATA: true }
-          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.7, SAMPLE_DATA: false }
-          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.7, SAMPLE_DATA: true }
+          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.7, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.7, SAMPLE_DATA: true, MAIN_VERSION: true }
           - { PHP_VERSION: php74-fpm, MAGENTO_VERSION: 2.3.7, SAMPLE_DATA: false }
           - { PHP_VERSION: php74-fpm, MAGENTO_VERSION: 2.3.7, SAMPLE_DATA: true }
-          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.6-p1, SAMPLE_DATA: false }
-          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.6-p1, SAMPLE_DATA: true }
+          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.6-p1, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.6-p1, SAMPLE_DATA: true, MAIN_VERSION: true }
           - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.6-p1, SAMPLE_DATA: false }
           - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.6-p1, SAMPLE_DATA: true }
-          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.6, SAMPLE_DATA: false }
-          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.6, SAMPLE_DATA: true }
+          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.6, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.6, SAMPLE_DATA: true, MAIN_VERSION: true }
           - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.6, SAMPLE_DATA: false }
           - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.6, SAMPLE_DATA: true }
-          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.5-p2, SAMPLE_DATA: false }
-          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.5-p2, SAMPLE_DATA: true }
+          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.5-p2, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.5-p2, SAMPLE_DATA: true, MAIN_VERSION: true }
           - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.5-p2, SAMPLE_DATA: false }
           - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.5-p2, SAMPLE_DATA: true }
-          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.5-p1, SAMPLE_DATA: false }
-          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.5-p1, SAMPLE_DATA: true }
+          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.5-p1, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.5-p1, SAMPLE_DATA: true, MAIN_VERSION: true }
           - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.5-p1, SAMPLE_DATA: false }
           - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.5-p1, SAMPLE_DATA: true }
           # 2.3.4 is disabled as I get a lot of these errors after switchting to Composer 2:
@@ -56,16 +56,16 @@ jobs:
 #          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.4, SAMPLE_DATA: true }
 #          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.4, SAMPLE_DATA: false }
 #          - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.4, SAMPLE_DATA: true }
-          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.3, SAMPLE_DATA: false }
-          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.3, SAMPLE_DATA: true }
+          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.3, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.3, SAMPLE_DATA: true, MAIN_VERSION: true }
           - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.3, SAMPLE_DATA: false }
           - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.3.3, SAMPLE_DATA: true }
-          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.2, SAMPLE_DATA: false }
-          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.2, SAMPLE_DATA: true }
-          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.1, SAMPLE_DATA: false }
-          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.1, SAMPLE_DATA: true }
-          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.0, SAMPLE_DATA: false }
-          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.0, SAMPLE_DATA: true }
+          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.2, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.2, SAMPLE_DATA: true, MAIN_VERSION: true }
+          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.1, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.1, SAMPLE_DATA: true, MAIN_VERSION: true }
+          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.0, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php72-fpm, MAGENTO_VERSION: 2.3.0, SAMPLE_DATA: true, MAIN_VERSION: true }
     steps:
     - uses: actions/checkout@v4
 
@@ -75,6 +75,7 @@ jobs:
       run:
         docker build magento -f magento/Dockerfile-2.3
         -t michielgerritsen/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}
+        -t ghcr.io/${{ github.repository }}/magento-project-community-edition:magento${{ matrix.cfg.MAGENTO_VERSION }}
         -t ghcr.io/${{ github.repository }}/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}
         --build-arg MAGENTO_VERSION=${{ matrix.cfg.MAGENTO_VERSION }}
         --build-arg PHP_VERSION=${{ matrix.cfg.PHP_VERSION }}
@@ -84,6 +85,7 @@ jobs:
       run:
         docker build magento -f magento/Dockerfile-2.3
         -t michielgerritsen/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
+        -t ghcr.io/${{ github.repository }}/magento-project-community-edition:magento${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
         -t ghcr.io/${{ github.repository }}/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
         --build-arg MAGENTO_VERSION=${{ matrix.cfg.MAGENTO_VERSION }}
         --build-arg PHP_VERSION=${{ matrix.cfg.PHP_VERSION }}
@@ -126,15 +128,25 @@ jobs:
     # Step 3: Upload the images to Docker Hub and ghcr.io.
     - name: Push the image to GitHub Container Registry (without sample data)
       if: github.ref == 'refs/heads/master' && matrix.cfg.SAMPLE_DATA == false
+      env:
+        MAIN_VERSION: ${{ matrix.cfg.MAIN_VERSION }}
       run: |
         echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
         docker push ghcr.io/${{ github.repository }}/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}
+        if [[ -n "${MAIN_VERSION}" ]]; then
+          docker push ghcr.io/${{ github.repository }}/magento-project-community-edition:magento${{ matrix.cfg.MAGENTO_VERSION }}
+        fi
 
     - name: Push the image to GitHub Container Registry  (with sample data)
       if: github.ref == 'refs/heads/master' && matrix.cfg.SAMPLE_DATA == true
+      env:
+        MAIN_VERSION: ${{ matrix.cfg.MAIN_VERSION }}
       run: |
         echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
         docker push ghcr.io/${{ github.repository }}/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
+        if [[ -n "${MAIN_VERSION}" ]]; then
+          docker push ghcr.io/${{ github.repository }}/magento-project-community-edition:magento${{ matrix.cfg.MAGENTO_VERSION }}
+        fi
 
     - name: Push the image to Docker hub (without sample data)
       if: github.ref == 'refs/heads/master' && matrix.cfg.SAMPLE_DATA == false

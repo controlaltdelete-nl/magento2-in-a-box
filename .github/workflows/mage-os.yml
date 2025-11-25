@@ -12,34 +12,34 @@ jobs:
       fail-fast: false
       matrix:
         cfg:
-          - { PHP_VERSION: php84-fpm, MAGEOS_VERSION: 2.0.0, SAMPLE_DATA: true }
-          - { PHP_VERSION: php84-fpm, MAGEOS_VERSION: 2.0.0, SAMPLE_DATA: false }
+          - { PHP_VERSION: php84-fpm, MAGEOS_VERSION: 2.0.0, SAMPLE_DATA: true, MAIN_VERSION: true }
+          - { PHP_VERSION: php84-fpm, MAGEOS_VERSION: 2.0.0, SAMPLE_DATA: false, MAIN_VERSION: true }
           - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 2.0.0, SAMPLE_DATA: true }
           - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 2.0.0, SAMPLE_DATA: false }
-          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.3.1, SAMPLE_DATA: true }
-          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.3.1, SAMPLE_DATA: false }
-          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.3.0, SAMPLE_DATA: true }
-          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.3.0, SAMPLE_DATA: false }
-          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.2.0, SAMPLE_DATA: true }
-          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.2.0, SAMPLE_DATA: false }
-          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.1.1, SAMPLE_DATA: true }
-          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.1.1, SAMPLE_DATA: false }
-          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.1.0, SAMPLE_DATA: true }
-          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.1.0, SAMPLE_DATA: false }
-          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.0.6, SAMPLE_DATA: true }
-          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.0.6, SAMPLE_DATA: false }
-          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.0.5, SAMPLE_DATA: true }
-          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.0.5, SAMPLE_DATA: false }
-          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.0.4, SAMPLE_DATA: true }
-          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.0.4, SAMPLE_DATA: false }
-          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.0.3, SAMPLE_DATA: true }
-          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.0.3, SAMPLE_DATA: false }
-          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.0.2, SAMPLE_DATA: false }
-          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.0.2, SAMPLE_DATA: false }
-          - { PHP_VERSION: php82-fpm, MAGEOS_VERSION: 1.0.1, SAMPLE_DATA: true }
-          - { PHP_VERSION: php82-fpm, MAGEOS_VERSION: 1.0.1, SAMPLE_DATA: false }
-          - { PHP_VERSION: php82-fpm, MAGEOS_VERSION: 1.0.0, SAMPLE_DATA: true }
-          - { PHP_VERSION: php82-fpm, MAGEOS_VERSION: 1.0.0, SAMPLE_DATA: false }
+          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.3.1, SAMPLE_DATA: true, MAIN_VERSION: true }
+          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.3.1, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.3.0, SAMPLE_DATA: true, MAIN_VERSION: true }
+          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.3.0, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.2.0, SAMPLE_DATA: true, MAIN_VERSION: true }
+          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.2.0, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.1.1, SAMPLE_DATA: true, MAIN_VERSION: true }
+          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.1.1, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.1.0, SAMPLE_DATA: true, MAIN_VERSION: true }
+          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.1.0, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.0.6, SAMPLE_DATA: true, MAIN_VERSION: true }
+          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.0.6, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.0.5, SAMPLE_DATA: true, MAIN_VERSION: true }
+          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.0.5, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.0.4, SAMPLE_DATA: true, MAIN_VERSION: true }
+          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.0.4, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.0.3, SAMPLE_DATA: true, MAIN_VERSION: true }
+          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.0.3, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.0.2, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php83-fpm, MAGEOS_VERSION: 1.0.2, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php82-fpm, MAGEOS_VERSION: 1.0.1, SAMPLE_DATA: true, MAIN_VERSION: true }
+          - { PHP_VERSION: php82-fpm, MAGEOS_VERSION: 1.0.1, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php82-fpm, MAGEOS_VERSION: 1.0.0, SAMPLE_DATA: true, MAIN_VERSION: true }
+          - { PHP_VERSION: php82-fpm, MAGEOS_VERSION: 1.0.0, SAMPLE_DATA: false, MAIN_VERSION: true }
     steps:
     - uses: actions/checkout@v5
 
@@ -49,6 +49,7 @@ jobs:
       run:
         docker build mage-os -f mage-os/Dockerfile
         -t michielgerritsen/mage-os-community-edition:${{ matrix.cfg.PHP_VERSION }}-mage-os${{ matrix.cfg.MAGEOS_VERSION }}
+        -t ghcr.io/${{ github.repository }}/mage-os-community-edition:mage-os${{ matrix.cfg.MAGENTO_VERSION }}
         -t ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ matrix.cfg.PHP_VERSION }}-mage-os${{ matrix.cfg.MAGENTO_VERSION }}
         --build-arg MAGEOS_VERSION=${{ matrix.cfg.MAGEOS_VERSION }}
         --build-arg PHP_VERSION=${{ matrix.cfg.PHP_VERSION }}
@@ -58,6 +59,7 @@ jobs:
       run:
         docker build mage-os -f mage-os/Dockerfile
         -t michielgerritsen/mage-os-community-edition:${{ matrix.cfg.PHP_VERSION }}-mage-os${{ matrix.cfg.MAGEOS_VERSION }}-sample-data
+        -t ghcr.io/${{ github.repository }}/mage-os-community-edition:mage-os${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
         -t ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ matrix.cfg.PHP_VERSION }}-mage-os${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
         --build-arg MAGEOS_VERSION=${{ matrix.cfg.MAGEOS_VERSION }}
         --build-arg PHP_VERSION=${{ matrix.cfg.PHP_VERSION }}
@@ -97,15 +99,25 @@ jobs:
     # Step 3: Upload the images to Docker Hub and ghcr.io.
     - name: Push the image to GitHub Container Registry (without sample data)
       if: github.ref == 'refs/heads/master' && matrix.cfg.SAMPLE_DATA == false
+      env:
+        MAIN_VERSION: ${{ matrix.cfg.MAIN_VERSION }}
       run: |
         echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
         docker push ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ matrix.cfg.PHP_VERSION }}-mage-os${{ matrix.cfg.MAGENTO_VERSION }}
+        if [[ -n "${MAIN_VERSION}" ]]; then
+          docker push ghcr.io/${{ github.repository }}/mage-os-community-edition:mage-os${{ matrix.cfg.MAGENTO_VERSION }}
+        fi
 
     - name: Push the image to GitHub Container Registry  (with sample data)
       if: github.ref == 'refs/heads/master' && matrix.cfg.SAMPLE_DATA == true
+      env:
+        MAIN_VERSION: ${{ matrix.cfg.MAIN_VERSION }}
       run: |
         echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
         docker push ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ matrix.cfg.PHP_VERSION }}-mage-os${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
+        if [[ -n "${MAIN_VERSION}" ]]; then
+          docker push ghcr.io/${{ github.repository }}/mage-os-community-edition:mage-os${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
+        fi
 
     - name: Push the image to Docker hub (without sample data)
       if: github.ref == 'refs/heads/master' && matrix.cfg.SAMPLE_DATA == false
