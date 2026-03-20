@@ -100,6 +100,13 @@ jobs:
         docker run --memory=4G --detach --name magento-project-community-edition
         michielgerritsen/magento-project-community-edition:${{ steps.tags.outputs.tag }}
 
+    - name: Verify tool versions
+      run: |
+        docker exec magento-project-community-edition node --version
+        docker exec magento-project-community-edition npm --version
+        docker exec magento-project-community-edition php --version
+        docker exec magento-project-community-edition mysql --version
+
     - name: Create the dummy test directory
       run: docker exec magento-project-community-edition mkdir -p /data/app/code/MichielGerritsen/Magento2ExtensionIntegrationTest/Test/Integration
 

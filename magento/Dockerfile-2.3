@@ -20,6 +20,9 @@ COPY patches/APSB22-12/MDVA-43443_EE_2.3.4_COMPOSER_v1.patch MDVA-43443_EE_2.3.4
 COPY patches/APSB22-12/MDVA-43443_EE_2.4.2-p2_COMPOSER_v1.patch MDVA-43443_EE_2.4.2-p2_COMPOSER_v1.patch
 COPY templates/memory-limit-php.ini /usr/local/etc/php/conf.d/memory-limit-php.ini
 
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs
+
 RUN ./start-services && \
     composer self-update --2 && \
     echo "[cad] Composer version:" && \

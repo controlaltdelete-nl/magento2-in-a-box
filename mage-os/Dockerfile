@@ -15,6 +15,9 @@ COPY scripts/retry retry
 COPY scripts/allow-composer-plugins.php scripts/allow-composer-plugins.php
 COPY templates/memory-limit-php.ini /usr/local/etc/php/conf.d/memory-limit-php.ini
 
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs
+
 RUN set -e; \
     ./start-services && \
     composer self-update --2 && \

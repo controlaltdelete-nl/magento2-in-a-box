@@ -74,6 +74,13 @@ jobs:
         docker run --memory=4G --detach --name mage-os-community-edition
         michielgerritsen/mage-os-community-edition:${{ steps.tags.outputs.tag }}
 
+    - name: Verify tool versions
+      run: |
+        docker exec mage-os-community-edition node --version
+        docker exec mage-os-community-edition npm --version
+        docker exec mage-os-community-edition php --version
+        docker exec mage-os-community-edition mysql --version
+
     - name: Copy the example test module
       run: |
         docker exec mage-os-community-edition mkdir -p /data/extensions/MichielGerritsen-ExampleTest/Test/Integration/
