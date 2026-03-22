@@ -102,10 +102,19 @@ jobs:
 
     - name: Verify tool versions
       run: |
-        docker exec magento-project-community-edition node --version
-        docker exec magento-project-community-edition npm --version
         docker exec magento-project-community-edition php --version
         docker exec magento-project-community-edition mysql --version
+        docker exec magento-project-community-edition node --version
+        docker exec magento-project-community-edition npm --version
+
+    - name: Verify Node.js version switching
+      run: |
+        docker exec magento-project-community-edition n 18
+        docker exec magento-project-community-edition node --version | grep -E "^v18\."
+        docker exec magento-project-community-edition n 22
+        docker exec magento-project-community-edition node --version | grep -E "^v22\."
+        docker exec magento-project-community-edition n 20
+        docker exec magento-project-community-edition node --version | grep -E "^v20\."
 
     - name: Create the dummy test directory
       run: docker exec magento-project-community-edition mkdir -p /data/app/code/MichielGerritsen/Magento2ExtensionIntegrationTest/Test/Integration

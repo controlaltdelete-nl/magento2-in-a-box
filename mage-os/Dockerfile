@@ -16,7 +16,11 @@ COPY scripts/allow-composer-plugins.php scripts/allow-composer-plugins.php
 COPY templates/memory-limit-php.ini /usr/local/etc/php/conf.d/memory-limit-php.ini
 
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs
+    apt-get install -y nodejs && \
+    npm install -g n && \
+    n 18 && \
+    n 22 && \
+    n 20
 
 RUN set -e; \
     ./start-services && \

@@ -76,10 +76,19 @@ jobs:
 
     - name: Verify tool versions
       run: |
-        docker exec mage-os-community-edition node --version
-        docker exec mage-os-community-edition npm --version
         docker exec mage-os-community-edition php --version
         docker exec mage-os-community-edition mysql --version
+        docker exec mage-os-community-edition node --version
+        docker exec mage-os-community-edition npm --version
+
+    - name: Verify Node.js version switching
+      run: |
+        docker exec mage-os-community-edition n 18
+        docker exec mage-os-community-edition node --version | grep -E "^v18\."
+        docker exec mage-os-community-edition n 22
+        docker exec mage-os-community-edition node --version | grep -E "^v22\."
+        docker exec mage-os-community-edition n 20
+        docker exec mage-os-community-edition node --version | grep -E "^v20\."
 
     - name: Copy the example test module
       run: |

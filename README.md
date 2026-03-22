@@ -105,6 +105,24 @@ There are a few special command that you can run.
 | Change the base URL               | `docker exec magento ./change-base-url <domain-name>`       | `docker exec mage-os ./change-base-url <domain-name>`       | 
 | Disable two-factor authentication | `docker exec magento ./disable-2fa`                         | `docker exec mage-os ./disable-2fa`                         | 
 
+### Node.js
+
+All images ship with Node.js 18, 20, and 22. Node 20 (LTS) is the default. To switch versions inside a running container, use the `n` version manager:
+
+```
+docker exec magento n 18
+docker exec magento n 22
+docker exec magento n 20
+```
+
+Or open a shell and run `n <version>` directly:
+
+```
+docker exec -it magento bash
+n 22
+node --version
+```
+
 ### GitHub Actions
 
 In the examples folder you can find 2 examples for integration and unit tests. View the [`readme.md`](examples/github) to see how you can start with this in your own project (hint: copy 2 files, add the composer name of your package, and you are good to go).
