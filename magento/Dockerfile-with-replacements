@@ -45,7 +45,7 @@ RUN set -e; \
     echo "[cad] Running Magento setup:install" && \
     php bin/magento setup:install --backend-frontname=admin --session-save=db --db-host=127.0.0.1 --db-name=magento --db-user=magento --db-password=password --base-url=http://localhost --timezone=Europe/Amsterdam --currency=EUR --admin-user=exampleuser --admin-password=examplepassword123 --admin-email=user@example.com --admin-firstname=Example --admin-lastname=Example --use-rewrites=1 && \
     php bin/magento deploy:mode:set developer && \
-    if [ "${DISABLE_2FA}" = "true" ] && grep -q Magento_TwoFactorAuth "app/etc/config.php"; then echo "[cad] Disabling 2FA"; php bin/magento module:disable Magento_TwoFactorAuth -f; fi && \
+    if [ "${DISABLE_2FA}" = "true" ] && grep -q "'Magento_TwoFactorAuth'" "app/etc/config.php"; then tfa_mods="Magento_TwoFactorAuth"; grep -q "'Magento_AdminAdobeImsTwoFactorAuth'" "app/etc/config.php" && tfa_mods="$tfa_mods Magento_AdminAdobeImsTwoFactorAuth"; echo "[cad] Disabling $tfa_mods"; php bin/magento module:disable $tfa_mods -f; fi && \
     php bin/magento setup:static-content:deploy en_US -f -j 12 && \
     php bin/magento setup:di:compile && \
     php bin/magento indexer:reindex && \
