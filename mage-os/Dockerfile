@@ -16,7 +16,9 @@ COPY scripts/retry retry
 COPY scripts/allow-composer-plugins.php scripts/allow-composer-plugins.php
 
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs
+    apt-get install -y --no-install-recommends nodejs && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN set -e; \
     ./start-services && \
@@ -48,6 +50,9 @@ RUN set -e; \
     mkdir -p extensions && \
     composer config repositories.dev-extensions path extensions/* && \
     composer require --dev phpstan/phpstan bitexpert/phpstan-magento phpstan/extension-installer && \
+    composer clear-cache && \
+    find vendor -name .git -type d -exec rm -rf {} + && \
+    rm -rf var/cache/* var/log/* var/page_cache/* var/report/* /tmp/mage-os && \
     ./stop-services
 
 COPY templates/supervisord-webserver.conf /etc/supervisor/conf.d/webserver.conf
