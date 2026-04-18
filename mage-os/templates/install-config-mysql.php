@@ -19,10 +19,12 @@ if (is_file($appConfigFile)) {
 }
 
 $disableCandidates = ['Magento_TwoFactorAuth', 'Magento_AdminAdobeImsTwoFactorAuth'];
-$toDisable = array_values(array_filter(
-    $disableCandidates,
-    static fn(string $name): bool => isset($modules[$name]) && !$modules[$name]
-));
+$toDisable = [];
+foreach ($disableCandidates as $name) {
+    if (isset($modules[$name]) && !$modules[$name]) {
+        $toDisable[] = $name;
+    }
+}
 
 // Sample data modules are irrelevant for integration tests and pull in extra
 // data fixtures that slow the sandbox install down.
