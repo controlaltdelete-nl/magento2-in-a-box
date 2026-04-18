@@ -1,0 +1,33 @@
+# syntax=docker/dockerfile:1.4
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE}
+
+ARG HYVA_GITLAB_HOST=gitlab.hyva.io
+
+RUN --mount=type=secret,id=hyva_key,mode=0400,required=true \
+    set -e; \
+    apt-get update && apt-get install -y --no-install-recommends openssh-client && rm -rf /var/lib/apt/lists/*; \
+    ./start-services; \
+    mkdir -p /root/.ssh && chmod 700 /root/.ssh; \
+    ssh-keyscan -t rsa,ecdsa,ed25519 "$HYVA_GITLAB_HOST" >> /root/.ssh/known_hosts 2>/dev/null; \
+    eval "$(ssh-agent -s)"; \
+    ssh-add /run/secrets/hyva_key; \
+    composer config repositories.hyva-themes/magento2-theme-module          git "git@${HYVA_GITLAB_HOST}:hyva-themes/magento2-theme-module.git"; \
+    composer config repositories.hyva-themes/magento2-reset-theme           git "git@${HYVA_GITLAB_HOST}:hyva-themes/magento2-reset-theme.git"; \
+    composer config repositories.hyva-themes/magento2-email-module          git "git@${HYVA_GITLAB_HOST}:hyva-themes/magento2-email-module.git"; \
+    composer config repositories.hyva-themes/magento2-default-theme         git "git@${HYVA_GITLAB_HOST}:hyva-themes/magento2-default-theme.git"; \
+    composer config repositories.hyva-themes/magento2-compat-module-fallback git "git@${HYVA_GITLAB_HOST}:hyva-themes/magento2-compat-module-fallback.git"; \
+    composer config repositories.hyva-themes/magento2-luma-checkout         git "git@${HYVA_GITLAB_HOST}:hyva-themes/magento2-luma-checkout.git"; \
+    composer config repositories.hyva-themes/magento2-theme-fallback        git "git@${HYVA_GITLAB_HOST}:hyva-themes/magento2-theme-fallback.git"; \
+    ./retry "composer require hyva-themes/magento2-default-theme hyva-themes/magento2-luma-checkout --no-interaction"; \
+    eval "$(ssh-agent -k)"; \
+    find vendor/hyva-themes -name .git -type d -prune -exec rm -rf {} + 2>/dev/null || true; \
+    rm -rf /root/.ssh; \
+    php bin/magento setup:upgrade; \
+    php bin/magento config:set --lock-config design/theme/theme_id Hyva/default; \
+    php bin/magento config:set --lock-config hyva_theme_fallback/general/enable 1; \
+    php bin/magento setup:static-content:deploy en_US -f -j 12; \
+    php bin/magento setup:di:compile; \
+    php bin/magento indexer:reindex; \
+    php bin/magento cache:flush; \
+    ./stop-services

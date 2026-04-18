@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      HYVA_PRIVATE_KEY: ${{ secrets.HYVA_PRIVATE_KEY }}
     strategy:
       fail-fast: false
       matrix:
@@ -174,12 +176,100 @@ jobs:
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
         docker push michielgerritsen/mage-os-community-edition:${{ steps.tags.outputs.tag }}
 
+    # Step 4: Optional Hyva variant build & test & push.
+    # Runs only when HYVA_PRIVATE_KEY is set. The key is an SSH private
+    # key for gitlab.hyva.io and is injected via a BuildKit secret mount
+    # so it never appears in `docker history` or image layers.
+    - name: Determine if the Hyva variant should be built
+      id: hyva
+      run: |
+        if [[ -n "$HYVA_PRIVATE_KEY" ]]; then
+          echo "build=true" >> "$GITHUB_OUTPUT"
+          echo "tag=${{ steps.tags.outputs.tag }}-hyva" >> "$GITHUB_OUTPUT"
+          echo "main_tag=${{ steps.tags.outputs.main_tag }}-hyva" >> "$GITHUB_OUTPUT"
+        else
+          echo "build=false" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Stop the base container before starting the Hyva container
+      if: steps.hyva.outputs.build == 'true'
+      run: docker rm -f mage-os-community-edition
+
+    - name: Build the Hyva Docker image
+      if: steps.hyva.outputs.build == 'true'
+      env:
+        DOCKER_BUILDKIT: "1"
+      run: |
+        docker build mage-os -f mage-os/Dockerfile-hyva \
+          --secret id=hyva_key,env=HYVA_PRIVATE_KEY \
+          --build-arg BASE_IMAGE=michielgerritsen/mage-os-community-edition:${{ steps.tags.outputs.tag }} \
+          -t ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ steps.hyva.outputs.tag }} \
+          -t ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ steps.hyva.outputs.main_tag }}
+
+    - name: Start the Hyva Docker image
+      if: steps.hyva.outputs.build == 'true'
+      run: |
+        docker run --detach --name mage-os-community-edition-hyva \
+          -p 80:80 \
+          -e ENABLE_VARNISH=${{ steps.varnish.outputs.enabled }} \
+          -e URL=http://magento.test/ \
+          ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ steps.hyva.outputs.tag }}
+
+    - name: Verify the Hyva webserver is accessible
+      if: steps.hyva.outputs.build == 'true'
+      run: |
+        if [ "${{ steps.varnish.outputs.enabled }}" = "true" ]; then
+          HEADER_CHECK="X-Magento-Tags"
+        else
+          HEADER_CHECK="200 OK"
+        fi
+        for i in $(seq 1 30); do
+          if curl -s -D- -o /dev/null http://magento.test/ | grep -qi "$HEADER_CHECK"; then
+            echo "Hyva webserver is responding (checked for: $HEADER_CHECK)"
+            exit 0
+          fi
+          echo "Attempt $i: waiting for Hyva webserver..."
+          sleep 2
+        done
+        echo "Hyva webserver did not respond in time (checked for: $HEADER_CHECK)"
+        exit 1
+
+    - name: Run the Hyva Playwright test
+      if: steps.hyva.outputs.build == 'true'
+      run: npx playwright test tests/storefront-hyva.spec.ts
+
+    - name: Upload the Hyva Playwright report
+      if: failure() && steps.hyva.outputs.build == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-report-${{ steps.hyva.outputs.tag }}
+        path: |
+          playwright-report/
+          test-results/
+
+    - name: Push the Hyva image to GitHub Container Registry
+      if: github.ref == 'refs/heads/master' && steps.hyva.outputs.build == 'true'
+      env:
+        MAIN_VERSION: ${{ matrix.cfg.MAIN_VERSION }}
+      run: |
+        echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        docker push ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ steps.hyva.outputs.tag }}
+        if [[ -n "${MAIN_VERSION}" ]]; then
+          docker push ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ steps.hyva.outputs.main_tag }}
+        fi
+
     - name: Dump Docker logs files (on failure)
       if: failure()
       run: |
-        mkdir failure-logs
-        docker logs mage-os-community-edition > failure-logs/docker.log
-        docker cp mage-os-community-edition:/data/var/log failure-logs/var/log
+        mkdir -p failure-logs
+        if docker inspect mage-os-community-edition >/dev/null 2>&1; then
+          docker logs mage-os-community-edition > failure-logs/docker.log 2>&1 || true
+          docker cp mage-os-community-edition:/data/var/log failure-logs/var/log || true
+        fi
+        if docker inspect mage-os-community-edition-hyva >/dev/null 2>&1; then
+          docker logs mage-os-community-edition-hyva > failure-logs/docker-hyva.log 2>&1 || true
+          docker cp mage-os-community-edition-hyva:/data/var/log failure-logs/var/log-hyva || true
+        fi
 
     - name: Upload failure artifacts
       if: failure()
