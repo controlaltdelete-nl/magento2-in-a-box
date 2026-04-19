@@ -15,6 +15,10 @@ const testLastName = "User";
 async function login(page: Page, email: string, password: string) {
   await page.goto("/customer/account/login/");
   const loginForm = page.locator("#login-form");
+  // With Varnish, the login page HTML is cached and the form_key hidden input
+  // starts empty. Magento's form-key-provider.js populates it from the form_key
+  // cookie asynchronously; submitting before that lands causes "Invalid form key".
+  await expect(loginForm.locator('input[name="form_key"]')).not.toHaveValue("");
   await loginForm.locator("#email").fill(email);
   // Tab from the email field into the password field, then type the password.
   // We cannot use fill() on #pass because Magento's KnockoutJS renders it as
