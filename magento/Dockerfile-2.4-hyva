@@ -4,22 +4,24 @@ FROM ${BASE_IMAGE}
 
 # The Hyva source is cloned on the CI runner and mounted into the build via
 # BuildKit's bind mount, so the SSH key used to fetch it never touches the
-# container and the source does not bloat any image layer. Composer installs
-# the packages into vendor/ from local path repositories, then the mount
-# disappears when the RUN completes.
+# container. Each local clone is wired up as a composer `git` repository with
+# a file:// URL, so composer picks up the real tagged versions from the repo
+# history and can satisfy the normal semver constraints (this mirrors the
+# official Hyva / Mollie recipe against gitlab.hyva.io). The bind mount
+# disappears when the RUN completes; only the resulting vendor/ contents stay.
 RUN --mount=type=bind,source=hyva-src,target=/tmp/hyva-src,ro \
     set -e; \
     ./start-services; \
     for dir in /tmp/hyva-src/*/; do \
       pkg="hyva-themes/$(basename "$dir")"; \
-      composer config "repositories.${pkg}" \
-        "{\"type\":\"path\",\"url\":\"${dir%/}\",\"options\":{\"symlink\":false}}"; \
+      composer config "repositories.${pkg}" git "file://${dir%/}"; \
     done; \
-    ./retry "composer require hyva-themes/magento2-default-theme hyva-themes/magento2-luma-checkout --no-interaction"; \
+    ./retry "composer require hyva-themes/magento2-default-theme hyva-themes/magento2-luma-checkout --prefer-source --no-interaction"; \
     for dir in /tmp/hyva-src/*/; do \
       pkg="hyva-themes/$(basename "$dir")"; \
       composer config --unset "repositories.${pkg}"; \
     done; \
+    find vendor/hyva-themes -name .git -type d -prune -exec rm -rf {} +; \
     php bin/magento setup:upgrade; \
     php bin/magento config:set --lock-config design/theme/theme_id Hyva/default; \
     php bin/magento config:set --lock-config hyva_theme_fallback/general/enable 1; \

@@ -215,8 +215,7 @@ jobs:
           magento2-compat-module-fallback \
           magento2-luma-checkout \
           magento2-theme-fallback; do
-          git clone --depth=1 "git@gitlab.hyva.io:hyva-themes/${repo}.git" "mage-os/hyva-src/${repo}"
-          rm -rf "mage-os/hyva-src/${repo}/.git"
+          git clone "git@gitlab.hyva.io:hyva-themes/${repo}.git" "mage-os/hyva-src/${repo}"
         done
 
         shred -u "$KEY_FILE" 2>/dev/null || rm -f "$KEY_FILE"
