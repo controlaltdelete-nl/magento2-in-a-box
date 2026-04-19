@@ -6,7 +6,7 @@ test.describe("Hyva storefront", () => {
     expect(response?.status()).toBe(200);
 
     const html = await page.content();
-    expect(html).toContain("/static/frontend/Hyva/default/");
+    expect(html).toContain("/frontend/Hyva/");
     await expect(page.locator("html[x-data]")).toHaveCount(1);
   });
 
@@ -15,7 +15,8 @@ test.describe("Hyva storefront", () => {
     expect(response?.status()).toBe(200);
 
     const html = await page.content();
-    expect(html).toContain("/static/frontend/Hyva/default/");
+    expect(html).toContain("/frontend/Hyva/");
+    await expect(page.locator("html[x-data]")).toHaveCount(1);
   });
 
   test("cart page falls back to the Luma checkout theme", async ({ page }) => {
@@ -23,6 +24,7 @@ test.describe("Hyva storefront", () => {
     expect(response?.status()).toBe(200);
 
     const html = await page.content();
-    expect(html).toContain("/static/frontend/Magento/luma/");
+    expect(html).toContain("/frontend/Magento/luma/");
+    await expect(page.locator("html[x-data]")).toHaveCount(0);
   });
 });

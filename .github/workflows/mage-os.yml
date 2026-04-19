@@ -122,7 +122,7 @@ jobs:
 
     - name: Run Playwright tests (all)
       if: matrix.cfg.SAMPLE_DATA == true
-      run: npx playwright test
+      run: npx playwright test tests/storefront.spec.ts tests/customer-account.spec.ts tests/cart-and-checkout.spec.ts
 
     - name: Upload Playwright report
       if: failure()
@@ -177,9 +177,10 @@ jobs:
         docker push michielgerritsen/mage-os-community-edition:${{ steps.tags.outputs.tag }}
 
     # Step 4: Optional Hyva variant build & test & push.
-    # Runs only when HYVA_PRIVATE_KEY is set. The key is an SSH private
-    # key for gitlab.hyva.io and is injected via a BuildKit secret mount
-    # so it never appears in `docker history` or image layers.
+    # Runs only when HYVA_PRIVATE_KEY is set. The SSH key stays on the
+    # runner: we clone the Hyva repositories here, then the Dockerfile
+    # bind-mounts the source during the build. The key never enters the
+    # container image.
     - name: Determine if the Hyva variant should be built
       id: hyva
       run: |
@@ -191,6 +192,36 @@ jobs:
           echo "build=false" >> "$GITHUB_OUTPUT"
         fi
 
+    - name: Clone the Hyva source on the runner
+      if: steps.hyva.outputs.build == 'true'
+      run: |
+        set -e
+        SSH_DIR="$(mktemp -d)"
+        chmod 700 "$SSH_DIR"
+        KEY_FILE="${SSH_DIR}/id_hyva"
+        KNOWN_HOSTS="${SSH_DIR}/known_hosts"
+        printf '%s\n' "$HYVA_PRIVATE_KEY" > "$KEY_FILE"
+        chmod 600 "$KEY_FILE"
+        ssh-keyscan -t rsa,ecdsa,ed25519 gitlab.hyva.io > "$KNOWN_HOSTS" 2>/dev/null
+        export GIT_SSH_COMMAND="ssh -i $KEY_FILE -o IdentitiesOnly=yes -o UserKnownHostsFile=$KNOWN_HOSTS"
+
+        rm -rf mage-os/hyva-src
+        mkdir -p mage-os/hyva-src
+        for repo in \
+          magento2-theme-module \
+          magento2-reset-theme \
+          magento2-email-module \
+          magento2-default-theme \
+          magento2-compat-module-fallback \
+          magento2-luma-checkout \
+          magento2-theme-fallback; do
+          git clone --depth=1 "git@gitlab.hyva.io:hyva-themes/${repo}.git" "mage-os/hyva-src/${repo}"
+          rm -rf "mage-os/hyva-src/${repo}/.git"
+        done
+
+        shred -u "$KEY_FILE" 2>/dev/null || rm -f "$KEY_FILE"
+        rm -rf "$SSH_DIR"
+
     - name: Stop the base container before starting the Hyva container
       if: steps.hyva.outputs.build == 'true'
       run: docker rm -f mage-os-community-edition
@@ -201,10 +232,13 @@ jobs:
         DOCKER_BUILDKIT: "1"
       run: |
         docker build mage-os -f mage-os/Dockerfile-hyva \
-          --secret id=hyva_key,env=HYVA_PRIVATE_KEY \
           --build-arg BASE_IMAGE=michielgerritsen/mage-os-community-edition:${{ steps.tags.outputs.tag }} \
           -t ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ steps.hyva.outputs.tag }} \
           -t ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ steps.hyva.outputs.main_tag }}
+
+    - name: Remove the Hyva source from the runner
+      if: always() && steps.hyva.outputs.build == 'true'
+      run: rm -rf mage-os/hyva-src
 
     - name: Start the Hyva Docker image
       if: steps.hyva.outputs.build == 'true'
