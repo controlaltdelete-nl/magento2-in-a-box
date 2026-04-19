@@ -63,6 +63,7 @@ RUN ./start-services && \
     mysql -u root magento -e 'alter table `scconnector_google_remove_cl` auto_increment = 1;' && \
     if [ "${SAMPLE_DATA}" = "true" ]; then echo "[cad] Running php bin/magento sampledata:deploy"; php bin/magento sampledata:deploy; fi && \
     if [ "${SAMPLE_DATA}" = "true" ]; then echo "[cad] Running setup:upgrade" && (php bin/magento setup:upgrade || php bin/magento setup:upgrade || php bin/magento setup:upgrade); fi && \
+    if [ "${DISABLE_2FA}" = "true" ] && grep -q "'Magento_TwoFactorAuth'" "app/etc/config.php"; then tfa_mods="Magento_TwoFactorAuth"; grep -q "'Magento_AdminAdobeImsTwoFactorAuth'" "app/etc/config.php" && tfa_mods="$tfa_mods Magento_AdminAdobeImsTwoFactorAuth"; echo "[cad] Disabling $tfa_mods"; php bin/magento module:disable $tfa_mods -f; fi && \
     php bin/magento setup:static-content:deploy en_US -f -j 12 && \
     php bin/magento setup:di:compile && \
     php bin/magento indexer:reindex && \
