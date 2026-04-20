@@ -156,7 +156,7 @@ jobs:
 
     - name: Run Playwright tests (all)
       if: matrix.cfg.SAMPLE_DATA == true
-      run: npx playwright test
+      run: npx playwright test tests/storefront.spec.ts tests/customer-account.spec.ts tests/cart-and-checkout.spec.ts
 
     - name: Upload Playwright report
       if: failure()

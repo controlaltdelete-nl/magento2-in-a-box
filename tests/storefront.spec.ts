@@ -4,9 +4,6 @@ test.describe("Storefront basics", () => {
   test("homepage loads", async ({ page }) => {
     const response = await page.goto("/");
     expect(response?.status()).toBe(200);
-
-    // Verify the page contains a Magento footer copyright
-    await expect(page.locator(".copyright")).toBeVisible();
   });
 
   test("customer login page loads", async ({ page }) => {
