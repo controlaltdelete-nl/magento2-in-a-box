@@ -33,7 +33,7 @@ RUN set -e; \
     echo "[cad] Composer version:" && \
     composer --version && \
         echo "[cad] Downloading & unzipping Magento" && \
-        curl --fail-with-body -o magento.zip https://repo-magento-mirror.fooman.co.nz/dist/magento/$MAGENTO_TYPE/magento-$MAGENTO_TYPE-$MAGENTO_VERSION.zip && \
+        curl --fail-with-body -o magento.zip https://mirror.mage-os.org/packages/magento/$MAGENTO_TYPE-$MAGENTO_VERSION.zip && \
         unzip -q magento.zip -d . && \
         rm magento.zip; \
     echo "[cad] Allowing composer plugins" && \
@@ -43,7 +43,7 @@ RUN set -e; \
     php scripts/upgrade-to-composer-2.php && \
     rm scripts/upgrade-to-composer-2.php && \
     tmp=$(mktemp) && jq 'del(.repositories)' composer.json > "$tmp" && mv "$tmp" composer.json && \
-    composer repo add fooman composer https://repo-magento-mirror.fooman.co.nz/; \
+    composer repo add mage-os composer https://mirror.mage-os.org/ && \
     if [ "$MAGENTO_VERSION" = "2.4.4" ]; then composer require "magento/security-package:1.1.3-p1 as 1.1.3" --no-update; fi && \
     if [ "$MAGENTO_VERSION" = "2.4.4" ]; then composer require "magento/inventory-metapackage:1.2.4-p1 as 1.2.4" --no-update; fi && \
     echo "[cad] Running Composer update" && \
@@ -89,18 +89,12 @@ COPY scripts/change-base-url change-base-url
 COPY scripts/install-composer-package install-composer-package
 COPY scripts/disable-2fa disable-2fa
 
-COPY templates/phpunit-integration.xml dev/tests/integration/phpunit.xml
-COPY templates/phpunit-integration-248.xml dev/tests/integration/phpunit-248.xml
-COPY templates/phpunit-unit.xml dev/tests/unit/phpunit.xml
-COPY templates/phpunit-unit-248.xml dev/tests/unit/phpunit-248.xml
-COPY scripts/fix-phpunit.xml.php fix-phpunit.xml.php
+COPY scripts/patch-phpunit-xml.php patch-phpunit-xml.php
 
 RUN chmod +x enable-flat-catalog && \
     chmod +x change-base-url && \
-    php fix-phpunit.xml.php && \
-    rm fix-phpunit.xml.php && \
-    rm dev/tests/integration/phpunit-248.xml && \
-    rm dev/tests/unit/phpunit-248.xml
+    php patch-phpunit-xml.php && \
+    rm patch-phpunit-xml.php
 
 ENTRYPOINT ["/bin/bash", "entrypoint.sh"]
 

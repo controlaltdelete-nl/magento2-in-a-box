@@ -40,6 +40,7 @@ RUN ./start-services && \
     php scripts/upgrade-to-composer-2.php && \
     rm scripts/upgrade-to-composer-2.php && \
     tmp=$(mktemp) && jq 'del(.repositories)' composer.json > "$tmp" && mv "$tmp" composer.json && \
+    composer repo add mage-os composer https://mirror.mage-os.org/ && \
     composer repo add fooman composer https://repo-magento-mirror.fooman.co.nz/ && \
     echo "[cad] Running Composer update" && \
     ./retry "composer update --no-security-blocking" && \
@@ -81,16 +82,18 @@ COPY templates/supervisord-webserver.conf /etc/supervisor/conf.d/webserver.conf
 COPY patches/cors.patch cors.patch
 COPY templates/install-config-mysql.php dev/tests/integration/etc/
 COPY templates/post-install-setup-command-config.php dev/tests/integration/etc/
-COPY templates/phpunit-unit.xml dev/tests/unit/phpunit.xml
-COPY templates/phpunit-integration.xml dev/tests/integration/phpunit.xml
 COPY entrypoint.sh entrypoint.sh
 
 COPY scripts/enable-flat-catalog enable-flat-catalog
 COPY scripts/change-base-url change-base-url
 COPY scripts/install-composer-package install-composer-package
 COPY scripts/disable-2fa disable-2fa
+COPY scripts/patch-phpunit-xml.php patch-phpunit-xml.php
 
-RUN chmod +x enable-flat-catalog && chmod +x change-base-url
+RUN chmod +x enable-flat-catalog && \
+    chmod +x change-base-url && \
+    php patch-phpunit-xml.php && \
+    rm patch-phpunit-xml.php
 
 RUN git apply cors.patch && rm cors.patch vertex-compilation-issue.patch
 
