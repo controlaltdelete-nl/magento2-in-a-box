@@ -185,6 +185,9 @@ jobs:
     - name: Run setup:di:compile
       run: docker exec magento-project-community-edition ./retry "php bin/magento setup:di:compile"
 
+    - name: Strip xdebug ini directive from Magento phpunit config
+      run: docker exec magento-project-community-edition sed -i '/xdebug.max_nesting_level/d' /data/dev/tests/integration/phpunit.xml.dist
+
     - name: Run the example test
       run: docker exec magento-project-community-edition bash -c "cd /data/dev/tests/integration/ && ../../../vendor/bin/phpunit /data/vendor/michielgerritsen/exampletest/Test/Integration/ExampleTest.php"
 

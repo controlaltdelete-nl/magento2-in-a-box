@@ -25,14 +25,14 @@ RUN set -e; \
     echo "[cad] Composer version:" && \
     composer --version && \
     echo "[cad] Downloading & unzipping Magento" && \
-    curl --fail-with-body -o magento.zip https://repo-magento-mirror.fooman.co.nz/dist/magento/$MAGENTO_TYPE/magento-$MAGENTO_TYPE-$MAGENTO_VERSION.zip && \
+    curl --fail-with-body -o magento.zip https://mirror.mage-os.org/packages/magento/$MAGENTO_TYPE-$MAGENTO_VERSION.zip && \
     unzip -q magento.zip -d . && \
     rm magento.zip && \
     echo "[cad] Allowing composer plugins" && \
     php scripts/allow-composer-plugins.php && \
     rm scripts/allow-composer-plugins.php && \
     tmp=$(mktemp) && jq 'del(.repositories)' composer.json > "$tmp" && mv "$tmp" composer.json && \
-    composer repo add fooman composer https://repo-magento-mirror.fooman.co.nz/ && \
+    composer repo add mage-os composer https://mirror.mage-os.org/ && \
     echo "[cad] Running Composer update" && \
     ./retry "composer update --no-security-blocking" && \
     composer config --no-plugins allow-plugins.yireo/magento2-replace-tools true && \
