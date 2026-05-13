@@ -89,18 +89,12 @@ COPY scripts/change-base-url change-base-url
 COPY scripts/install-composer-package install-composer-package
 COPY scripts/disable-2fa disable-2fa
 
-COPY templates/phpunit-integration.xml dev/tests/integration/phpunit.xml
-COPY templates/phpunit-integration-248.xml dev/tests/integration/phpunit-248.xml
-COPY templates/phpunit-unit.xml dev/tests/unit/phpunit.xml
-COPY templates/phpunit-unit-248.xml dev/tests/unit/phpunit-248.xml
-COPY scripts/fix-phpunit.xml.php fix-phpunit.xml.php
+COPY scripts/patch-phpunit-xml.php patch-phpunit-xml.php
 
 RUN chmod +x enable-flat-catalog && \
     chmod +x change-base-url && \
-    php fix-phpunit.xml.php && \
-    rm fix-phpunit.xml.php && \
-    rm dev/tests/integration/phpunit-248.xml && \
-    rm dev/tests/unit/phpunit-248.xml
+    php patch-phpunit-xml.php && \
+    rm patch-phpunit-xml.php
 
 ENTRYPOINT ["/bin/bash", "entrypoint.sh"]
 
