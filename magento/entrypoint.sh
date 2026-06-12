@@ -1,13 +1,9 @@
 #!/bin/bash
 
-if [ "$ENABLE_VARNISH" = "true" ]; then
-  # When Varnish is enabled, the PHP built-in server needs to listen on port 8080
-  # because Varnish will listen on port 80 and proxy to the backend on 8080.
-  sed -i 's/0.0.0.0:80/0.0.0.0:8080/' /etc/supervisor/conf.d/webserver.conf
-fi
-
 # Comes from the parent image, starts supervisord (mysql, elasticsearch, php-fpm,
-# webserver, and optionally varnish when ENABLE_VARNISH=true)
+# nginx, and optionally varnish when ENABLE_VARNISH=true). When ENABLE_VARNISH=true
+# the parent image's start-services switches nginx from port 80 to 8080 so Varnish
+# can front it on 80.
 ./start-services
 
 # Config changes are written straight to core_config_data so we only pay the
