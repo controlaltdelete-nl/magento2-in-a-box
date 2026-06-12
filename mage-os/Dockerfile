@@ -56,7 +56,7 @@ RUN set -e; \
     rm -rf var/cache/* var/log/* var/page_cache/* var/report/* /tmp/mage-os && \
     ./stop-services
 
-COPY templates/supervisord-webserver.conf /etc/supervisor/conf.d/webserver.conf
+RUN cp /etc/nginx/available/magento.conf /etc/nginx/conf.d/default.conf
 COPY templates/install-config-mysql.php dev/tests/integration/etc/
 COPY templates/post-install-setup-command-config.php dev/tests/integration/etc/
 COPY entrypoint.sh entrypoint.sh

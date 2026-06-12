@@ -78,7 +78,7 @@ RUN ./start-services && \
     rm -rf var/cache/* var/log/* var/page_cache/* var/report/* && \
     ./stop-services
 
-COPY templates/supervisord-webserver.conf /etc/supervisor/conf.d/webserver.conf
+RUN cp /etc/nginx/available/magento.conf /etc/nginx/conf.d/default.conf
 COPY patches/cors.patch cors.patch
 COPY templates/install-config-mysql.php dev/tests/integration/etc/
 COPY templates/post-install-setup-command-config.php dev/tests/integration/etc/
