@@ -35,6 +35,22 @@ function output($message) {
     echo $message . PHP_EOL;
 }
 
+function fixNginxFastcgiPass() {
+    $sample = __DIR__ . '/../nginx.conf.sample';
+    if (!file_exists($sample)) {
+        return;
+    }
+
+    $contents = file_get_contents($sample);
+    $fixed = str_replace('php-fpm:9000', 'fastcgi_backend', $contents);
+    if ($fixed === $contents) {
+        return;
+    }
+
+    file_put_contents($sample, $fixed);
+    output('Rewrote nginx.conf.sample fastcgi_pass from php-fpm:9000 to fastcgi_backend');
+}
+
 if ($is240 || $is241 || $is242) {
     output('Found version 2.4.0 or 2.4.1 or 2.4.2');
     apply('APSB22-12/MDVA-43395_EE_2.4.3-p1_COMPOSER_v1.patch');
@@ -66,5 +82,7 @@ if ($is240 && !$isP1 && !$isP2) {
 if ($is246 || $is247 || $is248) {
     exec('composer require "webonyx/graphql-php:^15.0 <15.31.0"');
 }
+
+fixNginxFastcgiPass();
 
 apply('cors.patch');
