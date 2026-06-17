@@ -12,6 +12,7 @@ ENV URL=http://localhost/
 ENV FLAT_TABLES=false
 ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV ENABLE_VARNISH=false
+ENV ENABLE_MAILPIT=false
 
 COPY scripts/retry retry
 COPY patches/ patches/
@@ -98,4 +99,4 @@ RUN chmod +x enable-flat-catalog && \
 
 ENTRYPOINT ["/bin/bash", "entrypoint.sh"]
 
-EXPOSE 80 3306
+EXPOSE 80 3306 8025

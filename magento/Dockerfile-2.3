@@ -10,6 +10,7 @@ ENV CI=true
 ENV URL=http://localhost/
 ENV FLAT_TABLES=false
 ENV ENABLE_VARNISH=false
+ENV ENABLE_MAILPIT=false
 
 COPY scripts/retry retry
 COPY scripts/install-phpstan.php scripts/install-phpstan.php
@@ -99,4 +100,4 @@ RUN git apply cors.patch && rm cors.patch vertex-compilation-issue.patch
 
 ENTRYPOINT ["/bin/bash", "entrypoint.sh"]
 
-EXPOSE 80 3306
+EXPOSE 80 3306 8025

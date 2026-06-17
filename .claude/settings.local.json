@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__jetbrains__get_file_text_by_path",
+      "Bash(/opt/homebrew/bin/gh api:*)",
+      "Bash(/opt/homebrew/bin/gh run:*)",
+      "Bash(./test-flaky.sh)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:hub.docker.com)",
+      "Bash(chmod +x /Users/michielgerritsen/Sites/magento2-extension-integration-test/test-proxy-bug.sh)",
+      "Bash(./test-proxy-bug.sh)",
+      "Bash(./test-proxy-bug-loop.sh)",
+      "Bash(grep -E \"FAILED|BUG REPRODUCED|succeeded|MISSING\" proxy-bug-logs/run-*.log)",
+      "Bash(grep -E \"FAILED|BUG|succeeded|RESULTS\" proxy-bug-logs/stress/run-*.log proxy-bug-logs/stress/run-*.log)",
+      "Bash(/opt/homebrew/bin/gh repo:*)",
+      "Bash(git log:*)",
+      "Bash(bash -n /Users/michielgerritsen/Sites/magento2-extension-integration-test/magento/entrypoint.sh)",
+      "Bash(bash -n /Users/michielgerritsen/Sites/magento2-extension-integration-test/mage-os/entrypoint.sh)",
+      "Bash(gh run *)",
+      "Bash(bash /tmp/test_disable_2fa.sh)",
+      "Bash(curl -s \"https://raw.githubusercontent.com/magento/magento2/2.4-develop/dev/tests/integration/framework/Magento/TestFramework/Application.php\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/magento/magento2/2.4-develop/setup/src/Magento/Setup/Model/Installer.php\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/magento/magento2/2.4-develop/setup/src/Magento/Setup/Console/Command/InstallCommand.php\")",
+      "Bash(php -l /Users/michielgerritsen/Sites/magento2-extension-integration-test/magento/templates/install-config-mysql.php)",
+      "Bash(php -l /Users/michielgerritsen/Sites/magento2-extension-integration-test/mage-os/templates/install-config-mysql.php)",
+      "WebFetch(domain:docs.hyva.io)",
+      "Bash(gh repo *)",
+      "Bash(BASE_URL=https://mollie-opensource-248-p4.controlaltdelete.dev/hyva_onepage/ /opt/homebrew/bin/npx playwright test tests/storefront-hyva.spec.ts)",
+      "Bash(curl -sL -o /tmp/hyva-home.html -w \"status=%{http_code} final=%{url_effective}\\\\n\" \"https://mollie-opensource-248-p4.controlaltdelete.dev/hyva_onepage/\")",
+      "Read(//tmp/**)",
+      "Bash(grep -oE \"x-data[^ >]{0,30}\" /tmp/hyva-home.html)",
+      "Bash(/usr/bin/curl -sL \"https://mollie-opensource-248-p4.controlaltdelete.dev/hyva_onepage/checkout/cart/\" -o /tmp/cart.html)",
+      "Bash(/usr/bin/grep -o \"/frontend/[A-Za-z]*/[a-z]*\" /tmp/cart.html)",
+      "Bash(/usr/bin/sort -u)",
+      "Bash(chmod +x /Users/michielgerritsen/Sites/magento2-extension-integration-test/magento/scripts/install-hyva-checkout)",
+      "Bash(cp /Users/michielgerritsen/Sites/magento2-extension-integration-test/magento/scripts/install-hyva-checkout /Users/michielgerritsen/Sites/magento2-extension-integration-test/mage-os/scripts/install-hyva-checkout)",
+      "Bash(chmod +x /Users/michielgerritsen/Sites/magento2-extension-integration-test/mage-os/scripts/install-hyva-checkout)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

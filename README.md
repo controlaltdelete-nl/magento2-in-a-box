@@ -93,6 +93,7 @@ These are all optional and only required when you want to run the container to a
 | `-e URL=http://localhost:1234/` | Should match the port mapped to port 80 |
 | `-e FLAT_TABLES=false` | Enable the flat tables on startup? |
 | `-e ENABLE_VARNISH=false` | Enable Varnish full page cache on startup? When enabled, Varnish listens on port 80 and the PHP server moves to port 8080. |
+| `-e ENABLE_MAILPIT=true` | Catch all outgoing email in Mailpit instead of sending it. The web interface and API are available on port 8025 (map it with `-p 8025:8025`). |
 
 ## Commands
 

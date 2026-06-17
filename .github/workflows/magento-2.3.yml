@@ -114,7 +114,9 @@ jobs:
       run:
         docker run --detach --name magento-project-community-edition
         -p 80:80
+        -p 8025:8025
         -e ENABLE_VARNISH=${{ steps.varnish.outputs.enabled }}
+        -e ENABLE_MAILPIT=true
         -e URL=http://magento.test/
         michielgerritsen/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}
 
@@ -123,7 +125,9 @@ jobs:
       run:
         docker run --detach --name magento-project-community-edition
         -p 80:80
+        -p 8025:8025
         -e ENABLE_VARNISH=${{ steps.varnish.outputs.enabled }}
+        -e ENABLE_MAILPIT=true
         -e URL=http://magento.test/
         michielgerritsen/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
 
@@ -152,7 +156,7 @@ jobs:
 
     - name: Run Playwright tests (base)
       if: matrix.cfg.SAMPLE_DATA == false
-      run: npx playwright test tests/storefront.spec.ts tests/customer-account.spec.ts
+      run: npx playwright test tests/storefront.spec.ts tests/customer-account.spec.ts tests/mailpit.spec.ts
 
     - name: Run Playwright tests (all)
       if: matrix.cfg.SAMPLE_DATA == true

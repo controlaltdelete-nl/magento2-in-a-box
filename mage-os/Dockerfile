@@ -11,6 +11,7 @@ ENV URL=http://localhost/
 ENV FLAT_TABLES=false
 ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV ENABLE_VARNISH=false
+ENV ENABLE_MAILPIT=false
 
 COPY scripts/retry retry
 COPY scripts/allow-composer-plugins.php scripts/allow-composer-plugins.php
@@ -69,4 +70,4 @@ RUN chmod +x change-base-url
 
 ENTRYPOINT ["/bin/bash", "entrypoint.sh"]
 
-EXPOSE 80 3306
+EXPOSE 80 3306 8025

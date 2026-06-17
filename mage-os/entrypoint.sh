@@ -87,4 +87,13 @@ while sleep 5; do
       exit 1
     fi
   fi
+
+  if [ "$ENABLE_MAILPIT" = "true" ]; then
+    ps aux |grep mailpit |grep -q -v grep
+    MAILPIT_STATUS=$?
+    if [ $MAILPIT_STATUS -ne 0 ]; then
+      echo "Mailpit has exited."
+      exit 1
+    fi
+  fi
 done
