@@ -12,6 +12,18 @@ jobs:
       fail-fast: false
       matrix:
         cfg:
+          - { PHP_VERSION: php85-fpm, MAGEOS_VERSION: 3.3.0, SAMPLE_DATA: true, MAIN_VERSION: true }
+          - { PHP_VERSION: php85-fpm, MAGEOS_VERSION: 3.3.0, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php84-fpm, MAGEOS_VERSION: 3.3.0, SAMPLE_DATA: true }
+          - { PHP_VERSION: php84-fpm, MAGEOS_VERSION: 3.3.0, SAMPLE_DATA: false }
+          - { PHP_VERSION: php85-fpm, MAGEOS_VERSION: 3.2.0, SAMPLE_DATA: true, MAIN_VERSION: true }
+          - { PHP_VERSION: php85-fpm, MAGEOS_VERSION: 3.2.0, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php84-fpm, MAGEOS_VERSION: 3.2.0, SAMPLE_DATA: true }
+          - { PHP_VERSION: php84-fpm, MAGEOS_VERSION: 3.2.0, SAMPLE_DATA: false }
+          - { PHP_VERSION: php85-fpm, MAGEOS_VERSION: 3.1.0, SAMPLE_DATA: true, MAIN_VERSION: true }
+          - { PHP_VERSION: php85-fpm, MAGEOS_VERSION: 3.1.0, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php84-fpm, MAGEOS_VERSION: 3.1.0, SAMPLE_DATA: true }
+          - { PHP_VERSION: php84-fpm, MAGEOS_VERSION: 3.1.0, SAMPLE_DATA: false }
           - { PHP_VERSION: php85-fpm, MAGEOS_VERSION: 3.0.0, SAMPLE_DATA: true, MAIN_VERSION: true }
           - { PHP_VERSION: php85-fpm, MAGEOS_VERSION: 3.0.0, SAMPLE_DATA: false, MAIN_VERSION: true }
           - { PHP_VERSION: php84-fpm, MAGEOS_VERSION: 3.0.0, SAMPLE_DATA: true }

@@ -205,6 +205,9 @@ View [Mage-OS versions](#mage-os-versions) below.
 # Mage-OS Versions
 | Mage-OS Version | PHP 8.5 | PHP 8.4 | PHP 8.3 | PHP 8.2 |
 |-----------------|---------|---------|---------|---------|
+| 3.3.0           | x       | x       | -       | -       |
+| 3.2.0           | x       | x       | -       | -       |
+| 3.1.0           | x       | x       | -       | -       |
 | 3.0.0           | x       | x       | -       | -       |
 | 2.3.0           | -       | x       | x       | -       |
 | 2.2.2           | -       | x       | x       | -       |
