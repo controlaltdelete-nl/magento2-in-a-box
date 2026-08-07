@@ -1,0 +1,25 @@
+name: Check for new versions
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      recent_tag_limit:
+        description: 'How many of the most recent tags to check per product'
+        required: false
+        default: '20'
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v5
+
+    - name: Compare upstream tags against the build matrices
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        RECENT_TAG_LIMIT: ${{ inputs.recent_tag_limit || '20' }}
+      run: .github/scripts/check-new-versions.sh
