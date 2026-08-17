@@ -111,6 +111,22 @@ There are a few special command that you can run.
 
 In the examples folder you can find 2 examples for integration and unit tests. View the [`readme.md`](examples/github) to see how you can start with this in your own project (hint: copy 2 files, add the composer name of your package, and you are good to go).
 
+## Image tags
+
+Every build is published under a fully qualified tag, for example `php85-fpm-magento2.4.9` or `php85-fpm-mage-os3.4.0-sample-data`. On top of that there are two floating tags that always point at the newest tested release on the default PHP version:
+
+| Tag                  | Points at                       |
+|----------------------|---------------------------------|
+| `latest`             | Newest release, no sample data  |
+| `latest-sample-data` | Newest release, with sample data |
+
+```bash
+docker pull ghcr.io/controlaltdelete-nl/magento2-in-a-box/magento-project-community-edition:latest
+docker pull ghcr.io/controlaltdelete-nl/magento2-in-a-box/mage-os-community-edition:latest
+```
+
+Pin a specific tag if you need a reproducible build; `latest` moves when a new Magento or Mage-OS release is added. The `latest` tags are only published to GitHub Container Registry, not to the deprecated Docker Hub images.
+
 ## Version matrix
 
 View [Mage-OS versions](#mage-os-versions) below.

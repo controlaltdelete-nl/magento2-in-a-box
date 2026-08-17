@@ -12,8 +12,8 @@ jobs:
       fail-fast: false
       matrix:
         cfg:
-          - { PHP_VERSION: php85-fpm, MAGEOS_VERSION: 3.4.0, SAMPLE_DATA: true, MAIN_VERSION: true }
-          - { PHP_VERSION: php85-fpm, MAGEOS_VERSION: 3.4.0, SAMPLE_DATA: false, MAIN_VERSION: true }
+          - { PHP_VERSION: php85-fpm, MAGEOS_VERSION: 3.4.0, SAMPLE_DATA: true, MAIN_VERSION: true, LATEST: true }
+          - { PHP_VERSION: php85-fpm, MAGEOS_VERSION: 3.4.0, SAMPLE_DATA: false, MAIN_VERSION: true, LATEST: true }
           - { PHP_VERSION: php84-fpm, MAGEOS_VERSION: 3.4.0, SAMPLE_DATA: true }
           - { PHP_VERSION: php84-fpm, MAGEOS_VERSION: 3.4.0, SAMPLE_DATA: false }
           - { PHP_VERSION: php85-fpm, MAGEOS_VERSION: 3.3.0, SAMPLE_DATA: true, MAIN_VERSION: true }
@@ -89,14 +89,23 @@ jobs:
       run: |
         tag="${{ matrix.cfg.PHP_VERSION }}-mage-os${{ matrix.cfg.MAGEOS_VERSION }}"
         main_tag="mage-os${{ matrix.cfg.MAGEOS_VERSION }}"
+        latest_tag=""
 
         if [[ "${{ matrix.cfg.SAMPLE_DATA }}" == "true" ]]; then
           tag="${tag}-sample-data"
           main_tag="${main_tag}-sample-data"
         fi
 
+        if [[ -n "${{ matrix.cfg.LATEST }}" ]]; then
+          latest_tag="latest"
+          if [[ "${{ matrix.cfg.SAMPLE_DATA }}" == "true" ]]; then
+            latest_tag="latest-sample-data"
+          fi
+        fi
+
         echo "tag=$tag" >> "$GITHUB_OUTPUT"
         echo "main_tag=$main_tag" >> "$GITHUB_OUTPUT"
+        echo "latest_tag=$latest_tag" >> "$GITHUB_OUTPUT"
 
     - name: Build the Docker image
       run:
@@ -201,11 +210,17 @@ jobs:
       if: github.ref == 'refs/heads/master'
       env:
         MAIN_VERSION: ${{ matrix.cfg.MAIN_VERSION }}
+        LATEST_TAG: ${{ steps.tags.outputs.latest_tag }}
+        IMAGE: ghcr.io/${{ github.repository }}/mage-os-community-edition
       run: |
         echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-        docker push ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ steps.tags.outputs.tag }}
+        docker push "${IMAGE}:${{ steps.tags.outputs.tag }}"
         if [[ -n "${MAIN_VERSION}" ]]; then
-          docker push ghcr.io/${{ github.repository }}/mage-os-community-edition:${{ steps.tags.outputs.main_tag }}
+          docker push "${IMAGE}:${{ steps.tags.outputs.main_tag }}"
+        fi
+        if [[ -n "${LATEST_TAG}" ]]; then
+          docker tag "${IMAGE}:${{ steps.tags.outputs.tag }}" "${IMAGE}:${LATEST_TAG}"
+          docker push "${IMAGE}:${LATEST_TAG}"
         fi
 
     - name: Push the image to Docker hub
