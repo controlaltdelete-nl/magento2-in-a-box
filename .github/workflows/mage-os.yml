@@ -159,6 +159,7 @@ jobs:
         exit 1
 
     - name: Install Playwright
+      timeout-minutes: 10
       run: |
         npm install
         npx playwright install --with-deps chromium
