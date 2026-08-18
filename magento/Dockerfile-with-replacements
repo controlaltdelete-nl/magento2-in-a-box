@@ -53,7 +53,8 @@ RUN set -e; \
     php bin/magento indexer:reindex && \
     mkdir -p extensions && \
     composer config repositories.dev-extensions path extensions/* && \
-    composer require --dev phpstan/phpstan:~1.7 bitexpert/phpstan-magento && \
+    composer require --dev "phpstan/phpstan:^1.12 || ^2.0" "bitexpert/phpstan-magento:*" "phpstan/extension-installer:^1.4" --no-update && \
+    composer update phpstan/phpstan bitexpert/phpstan-magento phpstan/extension-installer rector/rector && \
     php scripts/apply-2.4-patches.php && \
     rm scripts/apply-2.4-patches.php && \
     composer clear-cache && \

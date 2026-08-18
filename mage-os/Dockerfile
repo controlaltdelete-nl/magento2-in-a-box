@@ -50,7 +50,8 @@ RUN set -e; \
     php bin/magento indexer:reindex && \
     mkdir -p extensions && \
     composer config repositories.dev-extensions path extensions/* && \
-    composer require --dev phpstan/phpstan bitexpert/phpstan-magento phpstan/extension-installer && \
+    composer require --dev "phpstan/phpstan:^1.12 || ^2.0" "bitexpert/phpstan-magento:*" "phpstan/extension-installer:^1.4" --no-update && \
+    composer update phpstan/phpstan bitexpert/phpstan-magento phpstan/extension-installer rector/rector && \
     composer clear-cache && \
     find vendor -name .git -type d -exec rm -rf {} + && \
     rm -rf var/cache/* var/log/* var/page_cache/* var/report/* /tmp/mage-os && \

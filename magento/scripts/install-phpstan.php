@@ -20,11 +20,21 @@ if (version_compare(PHP_VERSION, '7.2', '<')) {
     die(0);
 }
 
-$output = null;
-$code = null;
-exec('composer require --dev phpstan/phpstan:~1.0 bitexpert/phpstan-magento phpstan/extension-installer', $output, $code);
+// PHPStan 2.x requires PHP >= 7.4. On older PHP versions Composer resolves this
+// constraint back to PHPStan 1.12 with bitexpert/phpstan-magento 0.32.
+$commands = [
+    'composer require --dev "phpstan/phpstan:^1.12 || ^2.0" "bitexpert/phpstan-magento:*" "phpstan/extension-installer:^1.4" --no-update',
+    'composer update phpstan/phpstan bitexpert/phpstan-magento phpstan/extension-installer rector/rector',
+];
 
-if ($code !== 0) {
-    echo 'Unable to install PHPStan' . PHP_EOL;
-    die($code);
+foreach ($commands as $command) {
+    $output = null;
+    $code = null;
+    exec($command, $output, $code);
+
+    if ($code !== 0) {
+        echo 'Unable to install PHPStan' . PHP_EOL;
+        echo implode(PHP_EOL, $output) . PHP_EOL;
+        die($code);
+    }
 }
