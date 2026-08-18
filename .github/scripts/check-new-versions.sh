@@ -109,7 +109,7 @@ checkProduct() {
 FAILED_PRODUCTS=()
 
 checkProduct "Mage-OS" "mage-os/mageos-magento2" "MAGEOS_VERSION" mage-os.yml
-checkProduct "Magento" "magento/magento2" "MAGENTO_VERSION" magento-2.4.yml magento-2.3.yml
+checkProduct "Magento" "magento/magento2" "MAGENTO_VERSION" magento-2.4.yml
 
 if [ ${#FAILED_PRODUCTS[@]} -eq 0 ]; then
     echo "All recent upstream tags are built."

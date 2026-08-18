@@ -7,13 +7,13 @@ on: push
 jobs:
   build:
     strategy:
-      # This Matrix will run the tests on PHP 7.3, and 7.4, and on Magento 2.3.7 and 2.4.2-p1.
+      # This Matrix will run the tests on PHP 8.3 and 8.4, and on Magento 2.4.8-p5 and 2.4.9.
       matrix:
         include:
-          - PHP_VERSION: php73-fpm
-            MAGENTO_VERSION: 2.3.7
-          - PHP_VERSION: php74-fpm
-            MAGENTO_VERSION: 2.4.2-p1
+          - PHP_VERSION: php83-fpm
+            MAGENTO_VERSION: 2.4.8-p5
+          - PHP_VERSION: php84-fpm
+            MAGENTO_VERSION: 2.4.9
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
