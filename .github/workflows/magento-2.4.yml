@@ -369,7 +369,7 @@ jobs:
       timeout-minutes: 10
       run: |
         npm install
-        npx playwright install --with-deps chromium
+        .github/scripts/install-playwright.sh
 
     - name: Run Playwright tests (base)
       if: matrix.cfg.SAMPLE_DATA == false
@@ -418,20 +418,20 @@ jobs:
         IMAGE: ghcr.io/${{ github.repository }}/magento-project-community-edition
       run: |
         echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-        docker push "${IMAGE}:${{ steps.tags.outputs.tag }}"
+        .github/scripts/docker-push.sh "${IMAGE}:${{ steps.tags.outputs.tag }}"
         if [[ -n "${MAIN_VERSION}" ]]; then
-          docker push "${IMAGE}:${{ steps.tags.outputs.main_tag }}"
+          .github/scripts/docker-push.sh "${IMAGE}:${{ steps.tags.outputs.main_tag }}"
         fi
         if [[ -n "${LATEST_TAG}" ]]; then
           docker tag "${IMAGE}:${{ steps.tags.outputs.tag }}" "${IMAGE}:${LATEST_TAG}"
-          docker push "${IMAGE}:${LATEST_TAG}"
+          .github/scripts/docker-push.sh "${IMAGE}:${LATEST_TAG}"
         fi
 
     - name: Push the image to Docker hub
       if: github.ref == 'refs/heads/master'
       run: |
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        docker push michielgerritsen/magento-project-community-edition:${{ steps.tags.outputs.tag }}
+        .github/scripts/docker-push.sh michielgerritsen/magento-project-community-edition:${{ steps.tags.outputs.tag }}
 
     - name: Dump Docker logs files (on failure)
       if: failure()
