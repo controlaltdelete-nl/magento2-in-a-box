@@ -1,10 +1,8 @@
-diff --git a/phpserver/router.php b/phpserver/router.php
-index 06c23ecd..628193f5 100644
---- a/phpserver/router.php
-+++ b/phpserver/router.php
-@@ -14,6 +14,15 @@
-  * example usage: php -S 127.0.0.41:8082 -t ./pub/ ./router.php
-  */
+--- a/pub/index.php
++++ b/pub/index.php
+@@ -8,6 +8,15 @@
+ 
+ use Magento\Framework\App\Bootstrap;
  
 +header('Access-Control-Allow-Origin: *');
 +header('Access-Control-Allow-Methods: *');
@@ -15,6 +13,6 @@ index 06c23ecd..628193f5 100644
 +    exit;
 +}
 +
- /**
-  * Set it to true to enable debug mode
-  */
+ try {
+     require __DIR__ . '/../app/bootstrap.php';
+ } catch (\Exception $e) {
