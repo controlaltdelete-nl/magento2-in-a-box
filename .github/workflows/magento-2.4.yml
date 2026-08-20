@@ -18,6 +18,8 @@ jobs:
           - { PHP_VERSION: php85-fpm, MAGENTO_VERSION: 2.4.9, SAMPLE_DATA: true, MAIN_VERSION: true, LATEST: true }
           - { PHP_VERSION: php84-fpm, MAGENTO_VERSION: 2.4.9, SAMPLE_DATA: false }
           - { PHP_VERSION: php84-fpm, MAGENTO_VERSION: 2.4.9, SAMPLE_DATA: true }
+          - { PHP_VERSION: php83-fpm, MAGENTO_VERSION: 2.4.9, SAMPLE_DATA: false }
+          - { PHP_VERSION: php83-fpm, MAGENTO_VERSION: 2.4.9, SAMPLE_DATA: true }
           - { PHP_VERSION: php84-fpm, MAGENTO_VERSION: 2.4.8-p5, SAMPLE_DATA: false, MAIN_VERSION: true }
           - { PHP_VERSION: php84-fpm, MAGENTO_VERSION: 2.4.8-p5, SAMPLE_DATA: true, MAIN_VERSION: true }
           - { PHP_VERSION: php83-fpm, MAGENTO_VERSION: 2.4.8-p5, SAMPLE_DATA: false }
