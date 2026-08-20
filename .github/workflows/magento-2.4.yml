@@ -5,11 +5,10 @@ on:
   schedule:
     - cron: '0 0 * * 1'
 
+# GitHub caps a job's matrix at 256 configurations, so the versions are split
+# over two jobs. New releases go in `build`; `build-legacy` is a frozen list.
 jobs:
   build:
-    runs-on: ubuntu-latest
-    env:
-      COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
     strategy:
       fail-fast: false
       matrix:
@@ -154,6 +153,20 @@ jobs:
           - { PHP_VERSION: php82-fpm, MAGENTO_VERSION: 2.4.6, SAMPLE_DATA: true, MAIN_VERSION: true }
           - { PHP_VERSION: php81-fpm, MAGENTO_VERSION: 2.4.6, SAMPLE_DATA: false }
           - { PHP_VERSION: php81-fpm, MAGENTO_VERSION: 2.4.6, SAMPLE_DATA: true }
+    uses: ./.github/workflows/magento-2.4-build.yml
+    with:
+      PHP_VERSION: ${{ matrix.cfg.PHP_VERSION }}
+      MAGENTO_VERSION: ${{ matrix.cfg.MAGENTO_VERSION }}
+      SAMPLE_DATA: ${{ matrix.cfg.SAMPLE_DATA }}
+      MAIN_VERSION: ${{ matrix.cfg.MAIN_VERSION || false }}
+      LATEST: ${{ matrix.cfg.LATEST || false }}
+    secrets: inherit
+
+  build-legacy:
+    strategy:
+      fail-fast: false
+      matrix:
+        cfg:
           - { PHP_VERSION: php81-fpm, MAGENTO_VERSION: 2.4.5-p14, SAMPLE_DATA: false, MAIN_VERSION: true }
           - { PHP_VERSION: php81-fpm, MAGENTO_VERSION: 2.4.5-p14, SAMPLE_DATA: true, MAIN_VERSION: true }
           - { PHP_VERSION: php81-fpm, MAGENTO_VERSION: 2.4.5-p13, SAMPLE_DATA: false }
@@ -278,174 +291,11 @@ jobs:
           - { PHP_VERSION: php73-fpm, MAGENTO_VERSION: 2.4.0, SAMPLE_DATA: true, MAIN_VERSION: true }
           - { PHP_VERSION: php74-fpm, MAGENTO_VERSION: 2.4.0, SAMPLE_DATA: false }
           - { PHP_VERSION: php74-fpm, MAGENTO_VERSION: 2.4.0, SAMPLE_DATA: true }
-    steps:
-    - uses: actions/checkout@v4
-
-    # Step 1: Build the docker image
-    - name: Compute tag
-      id: tags
-      run: |
-        tag="${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}"
-        main_tag="magento${{ matrix.cfg.MAGENTO_VERSION }}"
-        latest_tag=""
-
-        if [[ "${{ matrix.cfg.SAMPLE_DATA }}" == "true" ]]; then
-          tag="${tag}-sample-data"
-          main_tag="${main_tag}-sample-data"
-        fi
-
-        if [[ -n "${{ matrix.cfg.LATEST }}" ]]; then
-          latest_tag="latest"
-          if [[ "${{ matrix.cfg.SAMPLE_DATA }}" == "true" ]]; then
-            latest_tag="latest-sample-data"
-          fi
-        fi
-
-        echo "tag=$tag" >> "$GITHUB_OUTPUT"
-        echo "main_tag=$main_tag" >> "$GITHUB_OUTPUT"
-        echo "latest_tag=$latest_tag" >> "$GITHUB_OUTPUT"
-
-    - name: Build the Docker image
-      run:
-        docker build magento -f magento/Dockerfile-2.4
-        -t michielgerritsen/magento-project-community-edition:${{ steps.tags.outputs.tag }}
-        -t ghcr.io/${{ github.repository }}/magento-project-community-edition:${{ steps.tags.outputs.tag }}
-        -t ghcr.io/${{ github.repository }}/magento-project-community-edition:${{ steps.tags.outputs.main_tag }}
-        --build-arg COMPOSER_AUTH="$COMPOSER_AUTH"
-        --build-arg MAGENTO_VERSION=${{ matrix.cfg.MAGENTO_VERSION }}
-        --build-arg PHP_VERSION=${{ matrix.cfg.PHP_VERSION }}
-        --build-arg SAMPLE_DATA=${{ matrix.cfg.SAMPLE_DATA }}
-
-    # Step 2: Test the docker image
-    - name: Randomly enable or disable Varnish
-      id: varnish
-      run: |
-        if [ $((RANDOM % 2)) -eq 1 ]; then
-          echo "enabled=true" >> $GITHUB_OUTPUT
-          echo "Varnish: enabled"
-        else
-          echo "enabled=false" >> $GITHUB_OUTPUT
-          echo "Varnish: disabled"
-        fi
-
-    - name: Add magento.test to hosts file
-      run: echo "127.0.0.1 magento.test" | sudo tee -a /etc/hosts
-
-    - name: Start the docker image (without sample date)
-      if: matrix.cfg.SAMPLE_DATA == false
-      run:
-        docker run --detach --name magento-project-community-edition
-        -p 80:80
-        -e ENABLE_VARNISH=${{ steps.varnish.outputs.enabled }}
-        -e URL=http://magento.test/
-        michielgerritsen/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}
-
-    - name: Start the docker image (with sample date)
-      if: matrix.cfg.SAMPLE_DATA == true
-      run:
-        docker run --detach --name magento-project-community-edition
-        -p 80:80
-        -e ENABLE_VARNISH=${{ steps.varnish.outputs.enabled }}
-        -e URL=http://magento.test/
-        michielgerritsen/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}-sample-data
-
-    - name: Verify webserver is accessible
-      run: |
-        if [ "${{ steps.varnish.outputs.enabled }}" = "true" ]; then
-          HEADER_CHECK="X-Magento-Tags"
-        else
-          HEADER_CHECK="200 OK"
-        fi
-        for i in $(seq 1 30); do
-          if curl -s -D- -o /dev/null http://magento.test/ | grep -qi "$HEADER_CHECK"; then
-            echo "Webserver is responding (checked for: $HEADER_CHECK)"
-            exit 0
-          fi
-          echo "Attempt $i: waiting for webserver..."
-          sleep 2
-        done
-        echo "Webserver did not respond in time (checked for: $HEADER_CHECK)"
-        exit 1
-
-    - name: Install Playwright
-      timeout-minutes: 10
-      run: |
-        npm install
-        .github/scripts/install-playwright.sh
-
-    - name: Run Playwright tests (base)
-      if: matrix.cfg.SAMPLE_DATA == false
-      run: npx playwright test tests/storefront.spec.ts tests/customer-account.spec.ts
-
-    - name: Run Playwright tests (all)
-      if: matrix.cfg.SAMPLE_DATA == true
-      run: npx playwright test
-
-    - name: Upload Playwright report
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: playwright-report-${{ steps.tags.outputs.tag }}
-        path: |
-          playwright-report/
-          test-results/
-
-    - name: Create the dummy test directory
-      run: docker exec magento-project-community-edition mkdir -p /data/app/code/MichielGerritsen/Magento2ExtensionIntegrationTest/Test/Integration
-
-    - name: Copy the example test module
-      run: |
-        docker exec magento-project-community-edition mkdir -p /data/extensions/MichielGerritsen-ExampleTest/Test/Integration/
-        docker cp Test/composer.json magento-project-community-edition:/data/extensions/MichielGerritsen-ExampleTest/
-        docker cp Test/ExampleTest.php magento-project-community-edition:/data/extensions/MichielGerritsen-ExampleTest/Test/Integration/
-
-    - name: Install the example test module
-      run: docker exec magento-project-community-edition composer require michielgerritsen/exampletest:@dev
-
-    - name: Enable developer mode
-      run: docker exec magento-project-community-edition ./retry "bin/magento deploy:mode:set developer"
-
-    - name: Run setup:di:compile
-      run: docker exec magento-project-community-edition ./retry "php bin/magento setup:di:compile"
-
-    - name: Run the example test
-      run: docker exec magento-project-community-edition bash -c "cd /data/dev/tests/integration/ && ../../../vendor/bin/phpunit /data/vendor/michielgerritsen/exampletest/Test/Integration/ExampleTest.php"
-
-    # Step 3: Upload the images to Docker Hub and ghcr.io.
-    - name: Push the image to GitHub Container Registry
-      if: github.ref == 'refs/heads/master'
-      env:
-        MAIN_VERSION: ${{ matrix.cfg.MAIN_VERSION }}
-        LATEST_TAG: ${{ steps.tags.outputs.latest_tag }}
-        IMAGE: ghcr.io/${{ github.repository }}/magento-project-community-edition
-      run: |
-        echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-        .github/scripts/docker-push.sh "${IMAGE}:${{ steps.tags.outputs.tag }}"
-        if [[ -n "${MAIN_VERSION}" ]]; then
-          .github/scripts/docker-push.sh "${IMAGE}:${{ steps.tags.outputs.main_tag }}"
-        fi
-        if [[ -n "${LATEST_TAG}" ]]; then
-          docker tag "${IMAGE}:${{ steps.tags.outputs.tag }}" "${IMAGE}:${LATEST_TAG}"
-          .github/scripts/docker-push.sh "${IMAGE}:${LATEST_TAG}"
-        fi
-
-    - name: Push the image to Docker hub
-      if: github.ref == 'refs/heads/master'
-      run: |
-        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        .github/scripts/docker-push.sh michielgerritsen/magento-project-community-edition:${{ steps.tags.outputs.tag }}
-
-    - name: Dump Docker logs files (on failure)
-      if: failure()
-      run: |
-        mkdir failure-logs
-        docker logs magento-project-community-edition > failure-logs/docker.log
-        docker cp magento-project-community-edition:/data/var/log failure-logs/var/log
-
-    - name: Upload failure artifacts
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: failure-artifacts-${{ steps.tags.outputs.tag }}
-        path: |
-          failure-logs
+    uses: ./.github/workflows/magento-2.4-build.yml
+    with:
+      PHP_VERSION: ${{ matrix.cfg.PHP_VERSION }}
+      MAGENTO_VERSION: ${{ matrix.cfg.MAGENTO_VERSION }}
+      SAMPLE_DATA: ${{ matrix.cfg.SAMPLE_DATA }}
+      MAIN_VERSION: ${{ matrix.cfg.MAIN_VERSION || false }}
+      LATEST: ${{ matrix.cfg.LATEST || false }}
+    secrets: inherit
