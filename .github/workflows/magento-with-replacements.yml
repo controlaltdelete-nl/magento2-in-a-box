@@ -60,7 +60,7 @@ jobs:
         -p 80:80
         -e ENABLE_VARNISH=${{ steps.varnish.outputs.enabled }}
         -e URL=http://magento.test/
-        michielgerritsen/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}
+        michielgerritsen/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}-with-replacements
 
     - name: Verify webserver is accessible
       run: |
