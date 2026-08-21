@@ -9,6 +9,7 @@ ENV CI=true
 ENV URL=http://localhost/
 ENV FLAT_TABLES=false
 ENV ENABLE_VARNISH=false
+ENV ENABLE_CORS=true
 
 COPY scripts/retry retry
 COPY patches/ patches/

@@ -1,5 +1,5 @@
 ARG PHP_VERSION=php74-fpm
-FROM michielgerritsen/magento2-base-image:${PHP_VERSION}
+FROM ghcr.io/controlaltdelete-nl/magento2-docker-base-images/magento2-base-image:${PHP_VERSION}
 
 ARG MAGEOS_VERSION=1.0.0
 ARG MAGEOS_TYPE=project-community-edition
@@ -11,6 +11,7 @@ ENV URL=http://localhost/
 ENV FLAT_TABLES=false
 ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV ENABLE_VARNISH=false
+ENV ENABLE_CORS=true
 
 COPY scripts/retry retry
 COPY scripts/allow-composer-plugins.php scripts/allow-composer-plugins.php

@@ -84,5 +84,3 @@ if ($is246 || $is247 || $is248) {
 }
 
 fixNginxFastcgiPass();
-
-apply('cors.patch');
