@@ -51,7 +51,9 @@ RUN set -e; \
     php bin/magento indexer:reindex && \
     mkdir -p extensions && \
     composer config repositories.dev-extensions path extensions/* && \
-    composer require --dev "phpstan/phpstan:^1.12 || ^2.0" "bitexpert/phpstan-magento:*" "phpstan/extension-installer:^1.4" --no-update && \
+    # phpstan/phpstan 2.2.10 and up break the bitexpert/phpstan-magento autoloaders:
+    # https://github.com/bitExpert/phpstan-magento/issues/356
+    composer require --dev "phpstan/phpstan:^1.12 || >=2.0 <2.2.10" "bitexpert/phpstan-magento:*" "phpstan/extension-installer:^1.4" --no-update && \
     composer update phpstan/phpstan bitexpert/phpstan-magento phpstan/extension-installer rector/rector && \
     composer clear-cache && \
     find vendor -name .git -type d -exec rm -rf {} + && \

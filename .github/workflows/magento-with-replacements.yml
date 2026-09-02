@@ -123,6 +123,9 @@ jobs:
     - name: Run the example test
       run: docker exec magento-project-community-edition bash -c "cd /data/dev/tests/integration/ && ../../../vendor/bin/phpunit /data/vendor/michielgerritsen/exampletest/Test/Integration/ExampleTest.php"
 
+    - name: Verify PHPStan runs without internal errors
+      run: .github/scripts/phpstan-smoke.sh magento-project-community-edition
+
     # Step 3: Upload the images to Docker Hub and ghcr.io.
     - name: Push the image to GitHub Container Registry
       if: github.ref == 'refs/heads/master'
