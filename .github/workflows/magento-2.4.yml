@@ -1,9 +1,13 @@
 name: Magento 2.4 Community Edition Docker container build
 on:
-  push:
   pull_request:
   schedule:
     - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 # GitHub caps a job's matrix at 256 configurations, so the versions are split
 # over two jobs. New releases go in `build`; `build-legacy` is a frozen list.
