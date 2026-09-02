@@ -125,6 +125,7 @@ jobs:
 
     # Step 3: Upload the images to Docker Hub and ghcr.io.
     - name: Push the image to GitHub Container Registry
+      if: github.ref == 'refs/heads/master'
       run: |
         echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
         .github/scripts/docker-push.sh \
