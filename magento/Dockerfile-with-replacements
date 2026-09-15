@@ -54,12 +54,10 @@ RUN set -e; \
     php bin/magento indexer:reindex && \
     mkdir -p extensions && \
     composer config repositories.dev-extensions path extensions/* && \
-    # phpstan/phpstan 2.2.10 and up break the bitexpert/phpstan-magento autoloaders:
+    # phpstan/phpstan 2.2.10 and up need bitexpert/phpstan-magento 0.44.0 or later:
     # https://github.com/bitExpert/phpstan-magento/issues/356
-    # bitexpert/phpstan-magento 0.43.0 claims to support PHP 7.2 but ships
-    # src/Magento/Framework/Escaper.php with a PHP 8 union type, which the
-    # autoloaders require() at runtime and PHP 7 cannot parse.
-    composer require --dev "phpstan/phpstan:^1.12 || >=2.0 <2.2.10" "bitexpert/phpstan-magento:$(php -r 'echo PHP_VERSION_ID < 80000 ? "<0.43" : "*";')" "phpstan/extension-installer:^1.4" --no-update && \
+    # PHP 7.3 cannot install PHPStan 2, so it gets a phpstan-magento that works with PHPStan 1.
+    composer require --dev "phpstan/phpstan:^1.12 || ^2.0" "bitexpert/phpstan-magento:$(php -r 'echo PHP_VERSION_ID < 70400 ? "*" : ">=0.44";')" "phpstan/extension-installer:^1.4" --no-update && \
     composer update phpstan/phpstan bitexpert/phpstan-magento phpstan/extension-installer rector/rector && \
     php scripts/apply-2.4-patches.php && \
     rm scripts/apply-2.4-patches.php && \
