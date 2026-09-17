@@ -20,7 +20,7 @@ jobs:
 
       # Download the correct Docker image with the correct Magento & PHP version for this specific run.
       - name: Start Docker
-        run: docker run --detach --name magento-project-community-edition michielgerritsen/magento-project-community-edition:${{ matrix.PHP_VERSION }}-magento${{ matrix.MAGENTO_VERSION }}
+        run: docker run --detach --name magento-project-community-edition ghcr.io/controlaltdelete-nl/magento2-in-a-box/magento-project-community-edition:${{ matrix.PHP_VERSION }}-magento${{ matrix.MAGENTO_VERSION }}
 
       # If your code is not in the root but in a subdirectory you need to change this command.
       # Example: If your code is in the `src` folder then you need to do this:

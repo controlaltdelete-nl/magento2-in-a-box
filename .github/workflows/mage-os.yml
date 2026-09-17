@@ -247,6 +247,7 @@ jobs:
           .github/scripts/docker-push.sh "${IMAGE}:${LATEST_TAG}"
         fi
 
+    # Deprecated: michielgerritsen/ on Docker Hub is kept only for existing users. Point docs and examples at ghcr.io.
     - name: Push the image to Docker hub
       if: github.ref == 'refs/heads/master'
       run: |

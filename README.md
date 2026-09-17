@@ -1,5 +1,7 @@
 # Magento 2 in-a-box
 
+> **Use the GitHub Container Registry images.** The images are published as `ghcr.io/controlaltdelete-nl/magento2-in-a-box/magento-project-community-edition` and `ghcr.io/controlaltdelete-nl/magento2-in-a-box/mage-os-community-edition`. The Docker Hub images under `michielgerritsen/` (`michielgerritsen/magento-project-community-edition`, `michielgerritsen/mage-os-community-edition`) are deprecated. They only get the fully qualified tags, no `latest` or short tags. Replace `michielgerritsen/` with `ghcr.io/controlaltdelete-nl/magento2-in-a-box/` and keep the same tag.
+
 Do you quickly need a up & running Magento environment for testing? That is exactly what this repository is about. Run a full pre-installed Magento 2/Mage-OS environment with a single command:
 
 **Magento 2:**
@@ -8,7 +10,7 @@ docker run -d --rm \
     --name=magento \
     -p 1234:80 \
     -e URL=http://localhost:1234/ \
-    michielgerritsen/magento-project-community-edition:php84-fpm-magento2.4.8
+    ghcr.io/controlaltdelete-nl/magento2-in-a-box/magento-project-community-edition:php84-fpm-magento2.4.8
 ```
 
 **Mage-OS:**
@@ -17,7 +19,7 @@ docker run -d --rm \
     --name=mage-os \
     -p 1234:80 \
     -e URL=http://localhost:1234/ \
-    michielgerritsen/mage-os-community-edition:php84-fpm-mage-os2.0.0
+    ghcr.io/controlaltdelete-nl/magento2-in-a-box/mage-os-community-edition:php84-fpm-mage-os2.0.0
 ```
 
 Run the command, wait a moment, and then you can access Magento/Mage-OS on this URL:
@@ -42,7 +44,7 @@ docker run -d --rm \
     --name=magento \
     -p 1234:80 \
     -e URL=http://localhost:1234/ \
-    michielgerritsen/magento-project-community-edition:php84-fpm-magento2.4.8
+    ghcr.io/controlaltdelete-nl/magento2-in-a-box/magento-project-community-edition:php84-fpm-magento2.4.8
 ```
 
 **Mage-OS**
@@ -51,7 +53,7 @@ docker run -d --rm \
     --name=mage-os \
     -p 1234:80 \
     -e URL=http://localhost:1234/ \
-    michielgerritsen/mage-os-community-edition:php84-fpm-mage-os2.0.0
+    ghcr.io/controlaltdelete-nl/magento2-in-a-box/mage-os-community-edition:php84-fpm-mage-os2.0.0
 ```
 
 ### Docker Compose
@@ -62,7 +64,7 @@ version: '3'
 services:
   magento:
     container_name: magento
-    image: michielgerritsen/magento-project-community-edition:php83-fpm-magento2.4.7-p4
+    image: ghcr.io/controlaltdelete-nl/magento2-in-a-box/magento-project-community-edition:php83-fpm-magento2.4.7-p4
     ports:
       - 1234:80
     environment:
@@ -75,7 +77,7 @@ version: '3'
 services:
   mage-os:
     container_name: mage-os
-    image: michielgerritsen/mage-os-community-edition:php84-fpm-mage-os2.0.0
+    image: ghcr.io/controlaltdelete-nl/magento2-in-a-box/mage-os-community-edition:php84-fpm-mage-os2.0.0
     ports:
       - 1234:80
     environment:

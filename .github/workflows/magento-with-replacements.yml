@@ -135,6 +135,7 @@ jobs:
           ghcr.io/${{ github.repository }}/magento-project-community-edition:${{ matrix.cfg.PHP_VERSION }}-magento${{ matrix.cfg.MAGENTO_VERSION }}-with-replacements \
           ghcr.io/${{ github.repository }}/magento-project-community-edition:magento${{ matrix.cfg.MAGENTO_VERSION }}-with-replacements
 
+    # Deprecated: michielgerritsen/ on Docker Hub is kept only for existing users. Point docs and examples at ghcr.io.
     - name: Push the image to Docker hub
       if: github.ref == 'refs/heads/master'
       run: |
