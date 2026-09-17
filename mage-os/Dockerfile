@@ -69,8 +69,11 @@ COPY entrypoint.sh entrypoint.sh
 COPY scripts/change-base-url change-base-url
 COPY scripts/install-composer-package install-composer-package
 COPY scripts/disable-2fa disable-2fa
+COPY scripts/patch-phpunit-xml.php patch-phpunit-xml.php
 
-RUN chmod +x change-base-url
+RUN chmod +x change-base-url && \
+    php patch-phpunit-xml.php && \
+    rm patch-phpunit-xml.php
 
 ENTRYPOINT ["/bin/bash", "entrypoint.sh"]
 
