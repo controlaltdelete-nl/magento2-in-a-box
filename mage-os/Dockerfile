@@ -59,7 +59,12 @@ RUN set -e; \
     composer clear-cache && \
     find vendor -name .git -type d -exec rm -rf {} + && \
     rm -rf var/cache/* var/log/* var/page_cache/* var/report/* /tmp/mage-os && \
-    ./stop-services
+    ./stop-services && \
+    # Lucene leaves write.lock files behind when Elasticsearch stops. Kept in the image,
+    # they crash Elasticsearch on the first start of every container ("Underlying file
+    # changed by an external force": overlayfs gives the copied-up lock a new creation
+    # time), so supervisord has to restart it and search is ready ~10 seconds later.
+    find /var/lib/elasticsearch -name write.lock -delete
 
 RUN cp /etc/nginx/available/magento.conf /etc/nginx/conf.d/default.conf
 COPY templates/install-config-mysql.php dev/tests/integration/etc/
