@@ -10,7 +10,7 @@ docker run -d --rm \
     --name=magento \
     -p 1234:80 \
     -e URL=http://localhost:1234/ \
-    ghcr.io/controlaltdelete-nl/magento2-in-a-box/magento-project-community-edition:php84-fpm-magento2.4.8
+    ghcr.io/controlaltdelete-nl/magento2-in-a-box/magento-project-community-edition:php85-fpm-magento2.4.9
 ```
 
 **Mage-OS:**
@@ -19,7 +19,7 @@ docker run -d --rm \
     --name=mage-os \
     -p 1234:80 \
     -e URL=http://localhost:1234/ \
-    ghcr.io/controlaltdelete-nl/magento2-in-a-box/mage-os-community-edition:php84-fpm-mage-os2.0.0
+    ghcr.io/controlaltdelete-nl/magento2-in-a-box/mage-os-community-edition:php85-fpm-mage-os4.0.0
 ```
 
 Run the command, wait a moment, and then you can access Magento/Mage-OS on this URL:
@@ -44,7 +44,7 @@ docker run -d --rm \
     --name=magento \
     -p 1234:80 \
     -e URL=http://localhost:1234/ \
-    ghcr.io/controlaltdelete-nl/magento2-in-a-box/magento-project-community-edition:php84-fpm-magento2.4.8
+    ghcr.io/controlaltdelete-nl/magento2-in-a-box/magento-project-community-edition:php85-fpm-magento2.4.9
 ```
 
 **Mage-OS**
@@ -53,7 +53,7 @@ docker run -d --rm \
     --name=mage-os \
     -p 1234:80 \
     -e URL=http://localhost:1234/ \
-    ghcr.io/controlaltdelete-nl/magento2-in-a-box/mage-os-community-edition:php84-fpm-mage-os2.0.0
+    ghcr.io/controlaltdelete-nl/magento2-in-a-box/mage-os-community-edition:php85-fpm-mage-os4.0.0
 ```
 
 ### Docker Compose
@@ -64,7 +64,7 @@ version: '3'
 services:
   magento:
     container_name: magento
-    image: ghcr.io/controlaltdelete-nl/magento2-in-a-box/magento-project-community-edition:php83-fpm-magento2.4.7-p4
+    image: ghcr.io/controlaltdelete-nl/magento2-in-a-box/magento-project-community-edition:php85-fpm-magento2.4.9
     ports:
       - 1234:80
     environment:
@@ -77,7 +77,7 @@ version: '3'
 services:
   mage-os:
     container_name: mage-os
-    image: ghcr.io/controlaltdelete-nl/magento2-in-a-box/mage-os-community-edition:php84-fpm-mage-os2.0.0
+    image: ghcr.io/controlaltdelete-nl/magento2-in-a-box/mage-os-community-edition:php85-fpm-mage-os4.0.0
     ports:
       - 1234:80
     environment:
